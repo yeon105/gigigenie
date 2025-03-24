@@ -1,0 +1,56 @@
+# version: "3.8"
+
+services:
+  db:
+    build:
+      context: ./backend/db
+      dockerfile: Dockerfile
+    ports:
+      - 3308:3306
+    volumes:
+      - ./db/db_data:/var/lib/mysql
+    networks:
+      - container_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gigi?useSSL=false&serverTimeZone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_DRIVER: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    networks:
+      - container_network
+
+  fastapi:
+    build:
+      context: ./backend/fastapi
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
+    networks:
+      - container_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+      - fastapi
+    networks:
+      - container_network
+
+networks:
+  container_network:
