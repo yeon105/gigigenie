@@ -1,6 +1,6 @@
-package com.example.test_pgvector.repository;
+package com.gigigenie.repository;
 
-import com.example.test_pgvector.entity.Items;
+import com.gigigenie.entity.Items;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemsRepository extends JpaRepository<Items, Integer> {

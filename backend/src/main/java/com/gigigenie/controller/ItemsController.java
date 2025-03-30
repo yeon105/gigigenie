@@ -1,7 +1,7 @@
-package com.example.test_pgvector.controller;
+package com.gigigenie.controller;
 
-import com.example.test_pgvector.dto.MultipartInputStreamFileResource;
-import com.example.test_pgvector.service.ItemsService;
+import com.gigigenie.dto.MultipartInputStreamFileResource;
+import com.gigigenie.service.ItemsService;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
