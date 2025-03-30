@@ -1,6 +1,6 @@
-package com.example.test_pgvector.service;
+package com.gigigenie.service;
 
-import com.example.test_pgvector.repository.ItemsRepository;
+import com.gigigenie.repository.ItemsRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 

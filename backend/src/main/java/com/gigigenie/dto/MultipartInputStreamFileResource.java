@@ -1,4 +1,4 @@
-package com.example.test_pgvector.dto;
+package com.gigigenie.dto;
 
 import org.springframework.core.io.InputStreamResource;
 

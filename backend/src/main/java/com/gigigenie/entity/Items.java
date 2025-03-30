@@ -1,4 +1,4 @@
-package com.example.test_pgvector.entity;
+package com.gigigenie.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
