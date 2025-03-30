@@ -1,3 +1,0 @@
-# final-project
-
-# springboot, fastapi
