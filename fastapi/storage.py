@@ -6,7 +6,7 @@ import tempfile
 import os
 
 # 데이터베이스 연결 정보
-connection = "postgresql+psycopg://postgres:1234@localhost:5432/postgres"
+connection = "postgresql+psycopg://langchain:langchain@localhost:5432/langchain"
 
 def get_vector_store(collection_name="langchain", embeddings=None):
     """벡터 저장소 인스턴스를 반환합니다."""
