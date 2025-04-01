@@ -46,7 +46,7 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"문서 처리 중 오류 발생: {str(e)}")
 
-@app.post("/search", response_model=List[DocumentResponse])
+@app.post("/search", response_model=dict)
 async def search_endpoint(query: SearchQuery):
     """벡터 저장소에서 유사 문서를 검색합니다."""
     try:
@@ -57,7 +57,7 @@ async def search_endpoint(query: SearchQuery):
             embeddings=embeddings
         )
         
-        return results
+        return JSONResponse(content=results)
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"검색 중 오류 발생: {str(e)}")
