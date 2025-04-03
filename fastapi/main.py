@@ -5,7 +5,7 @@ from typing import List
 import uvicorn
 
 from models import SearchQuery, DocumentResponse
-from embedding import get_embeddings
+from services.embedding import get_embeddings
 from storage import process_pdf, list_collections
 from query import search_documents
 
