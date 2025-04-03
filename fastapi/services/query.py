@@ -1,6 +1,6 @@
 import re
 from storage import get_vector_store
-from embedding import get_llm
+from services.embedding import get_llm
 
 async def search_documents(query_text, collection_name="langchain", top_k=3, embeddings=None):
     """벡터 저장소에서 유사 문서를 검색하고, LLM을 사용하여 답변을 생성합니다."""

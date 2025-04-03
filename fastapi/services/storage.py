@@ -11,7 +11,7 @@ connection = "postgresql+psycopg://langchain:langchain@localhost:5432/langchain"
 def get_vector_store(collection_name="langchain", embeddings=None):
     """벡터 저장소 인스턴스를 반환합니다."""
     if not embeddings:
-        from embedding import get_embeddings
+        from services.embedding import get_embeddings
         embeddings = get_embeddings()
     
     return PGVector(
