@@ -1,0 +1,94 @@
+.login-page-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  text-align: center;
+}
+
+.login-header-bar {
+  padding: 24px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #eeeeee;
+  display: flex;
+  justify-content: center;
+}
+
+.login-content {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.kakao-button {
+  background-color: #fedd35 !important;
+  color: black !important;
+  font-weight: normal !important;
+  margin-bottom: 12px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  height: 48px;
+}
+
+.naver-button {
+  background-color: #00c73b !important;
+  color: white !important;
+  font-weight: normal !important;
+  margin-bottom: 12px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  height: 48px;
+}
+
+.google-button {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #dadce0 !important;
+  font-weight: normal !important;
+  margin-bottom: 12px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  height: 48px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+  position: relative;
+}
+
+.divider:before,
+.divider:after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.divider .MuiTypography-root {
+  padding: 0 10px;
+  background-color: white;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.guest-button {
+  background: #555555 !important;
+  color: white !important;
+  font-weight: normal !important;
+  margin-bottom: 16px !important;
+  text-transform: none !important;
+  height: 48px;
+}
+
+.terms-text {
+  color: #757575;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+}
