@@ -1,4 +1,3 @@
-# models.py
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 
@@ -10,4 +9,4 @@ class SearchQuery(BaseModel):
 class DocumentResponse(BaseModel):
     content: str
     metadata: Dict[str, Any]
-    score: Optional[float] = None 
+    score: Optional[float] = None
