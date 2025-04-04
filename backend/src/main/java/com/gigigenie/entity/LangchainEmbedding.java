@@ -1,6 +1,12 @@
 package com.gigigenie.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gigigenie.converter.EmbeddingConverter;
+import com.gigigenie.dto.DocumentDataDTO;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "langchain_pg_embedding")
@@ -10,19 +16,29 @@ import lombok.*;
 @AllArgsConstructor
 public class LangchainEmbedding {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 벡터 데이터 ID
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "collection_id", nullable = false)
-    private LangchainCollection collection; // 문서 ID (FK)
+    private LangchainCollection collection;
 
-    @Column(nullable = false, columnDefinition = "vector(1536)")
-    private String embedding; // 임베딩 데이터
+    @Convert(converter = EmbeddingConverter.class) // ✅ JSON 변환기 적용
+    @Column(nullable = false, columnDefinition = "TEXT") // 🔹 PostgreSQL에 JSON 문자열로 저장
+    private float[] embedding;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String document; // 추출된 텍스트
+    private String document;
 
     @Column(nullable = false, columnDefinition = "jsonb")
-    private String cmetadata; // 메타데이터
+    private String cmetadata;
+
+    @JsonIgnore
+    public DocumentDataDTO toDTO() {
+        DocumentDataDTO dto = new DocumentDataDTO();
+        dto.setDocument(this.document);
+        dto.setMetadata(this.cmetadata);
+        return dto;
+    }
 }

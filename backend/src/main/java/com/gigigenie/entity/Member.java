@@ -26,8 +26,9 @@ public class Member {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'guest'")
-    private Role role;
+    @Column(nullable = false, length = 10)
+    private Role role = Role.GUEST;  // 기본값 설정
+
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
