@@ -1,15 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/test
     username: postgres
-    password: 1234
-    driver-class-name: org.postgresql.Driver
+    password: 1005
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: create
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
-server:
-  port: 8080
+upstage:
+  api:
+    key: ${UPSTAGE_API_KEY}
