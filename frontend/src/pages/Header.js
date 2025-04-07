@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import ex_logo from "../images/ex_logo.png";
+import logo from "../images/gigigenie_logo.png";
 import { Button, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -27,7 +27,7 @@ const Header = ({ isLoggedIn, onMenuClick }) => {
       }}
     >
       <img
-        src={ex_logo}
+        src={logo}
         height="40px"
         alt="Logo"
         onClick={handleLogoClick}

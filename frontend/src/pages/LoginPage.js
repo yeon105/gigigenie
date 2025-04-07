@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ex_logo from "../images/ex_logo.png";
+import logo from "../images/gigigenie_logo.png";
 import google_logo from "../images/Google_Login.png";
 import { login } from "../redux/LoginSlice";
 import "../styles/LoginPage.css";
@@ -39,7 +39,7 @@ const LoginPage = () => {
             }}
           >
             <img
-              src={ex_logo}
+              src={logo}
               height="50px"
               alt="Logo"
               onClick={handleLogoClick}
