@@ -9,19 +9,15 @@ import java.util.Map;
 
 @Builder
 @Entity
-@Table(name = "langchain_pg_collection")
+@Table(name = "category")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LangchainCollection {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uuid;
-
-    @Type(JsonType.class)
-    @Column(columnDefinition = "jsonb")
-    private Map<String, Object> cmetadata;
-
+    private Long id;
+    private String category;
     private String name;
 }

@@ -14,19 +14,19 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "langchain_pg_embedding")
+@Table(name = "embedding")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LangchainEmbedding {
+public class Embedding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "collection_id", nullable = false)
-    private LangchainCollection collection;
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @JdbcTypeCode(SqlTypes.OTHER)
     @Column(columnDefinition = "vector")
