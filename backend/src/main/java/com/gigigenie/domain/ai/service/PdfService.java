@@ -53,7 +53,8 @@ public class PdfService {
                     Map<String, Object> metadata = new HashMap<>();
                     metadata.put("source", file.getOriginalFilename());
                     metadata.put("chunk_index", index);
-                    metadata.put("collection", category);
+                    metadata.put("category", category);
+                    metadata.put("product_name", name);
 
                     Embedding embeddingEntity = new Embedding();
                     embeddingEntity.setCategory(cg);
@@ -76,7 +77,7 @@ public class PdfService {
         return Map.of(
                 "status", "success",
                 "chunks", chunks.size(),
-                "collection", category
+                "category", category
         );
     }
 

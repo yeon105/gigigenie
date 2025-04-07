@@ -46,10 +46,12 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'dev.langchain4j:langchain4j-pgvector:0.28.0'
 
+    implementation 'org.apache.pdfbox:pdfbox:2.0.29'
+
     // LangChain4j
-    implementation 'dev.langchain4j:langchain4j:0.28.0'
-    implementation 'dev.langchain4j:langchain4j-open-ai:0.28.0'
-    implementation 'dev.langchain4j:langchain4j-document-parser-apache-pdfbox:1.0.0-beta2'
+//    implementation 'dev.langchain4j:langchain4j:0.28.0'
+//    implementation 'dev.langchain4j:langchain4j-open-ai:0.28.0'
+//    implementation 'dev.langchain4j:langchain4j-document-parser-apache-pdfbox:1.0.0-beta2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
