@@ -9,15 +9,19 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListSubheader,
+  MenuItem,
   Modal,
   Paper,
   Stack,
   TextField,
   Typography,
+  LinearProgress,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { savePdf } from "../api/pdfApi";
 import { logout } from "../redux/LoginSlice";
 
 const SideLayout = ({ onClose }) => {
@@ -26,15 +30,21 @@ const SideLayout = ({ onClose }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [deviceName, setDeviceName] = useState("");
+  const [category, setCategory] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedFile(null);
-    setDeviceName("");
+    if (!isUploading) {
+      setOpenModal(false);
+      setSelectedFile(null);
+      setDeviceName("");
+      setCategory("");
+    }
   };
 
   const handleFileChange = (event) => {
@@ -46,7 +56,7 @@ const SideLayout = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedFile) {
       alert("PDF 파일을 선택해주세요.");
       return;
@@ -57,10 +67,30 @@ const SideLayout = ({ onClose }) => {
       return;
     }
 
-    console.log("업로드할 파일:", selectedFile);
-    console.log("제품명:", deviceName);
+    if (!category) {
+      alert("카테고리를 선택해주세요.");
+      return;
+    }
 
-    handleCloseModal();
+    setIsUploading(true);
+    setUploadProgress(0);
+    setOpenModal(false);
+
+    try {
+      await savePdf(deviceName, category, selectedFile, (progress) => {
+        setUploadProgress(Math.min(progress * 0.9, 90));
+      });
+      setUploadProgress(100);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      alert("제품 설명서가 성공적으로 등록되었습니다.");
+    } catch (error) {
+      alert("제품 설명서 등록에 실패했습니다.");
+      console.error("등록 실패:", error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+      handleCloseModal();
+    }
   };
 
   const handleLogout = () => {
@@ -71,6 +101,10 @@ const SideLayout = ({ onClose }) => {
   const handleDeviceClick = (deviceName) => {
     navigate("/chat", { state: { deviceName } });
     onClose();
+  };
+
+  const handleCategoryChange = (event) => {
+    setCategory(event.target.value);
   };
 
   return (
@@ -244,6 +278,55 @@ const SideLayout = ({ onClose }) => {
             </Typography>
           </Box>
 
+          <TextField
+            select
+            fullWidth
+            label="카테고리"
+            variant="outlined"
+            size="small"
+            sx={{ mb: 3 }}
+            value={category}
+            onChange={handleCategoryChange}
+          >
+            <ListSubheader>가전제품 (가정용 전자기기)</ListSubheader>
+            <MenuItem value="tv">텔레비전 (TV)</MenuItem>
+            <MenuItem value="refrigerator">냉장고</MenuItem>
+            <MenuItem value="washing_machine">세탁기</MenuItem>
+            <MenuItem value="microwave">전자레인지</MenuItem>
+            <MenuItem value="air_conditioner">에어컨</MenuItem>
+            <MenuItem value="vacuum">청소기 (유선/무선)</MenuItem>
+            <MenuItem value="water_purifier">정수기</MenuItem>
+            <MenuItem value="coffee_machine">커피머신</MenuItem>
+            <MenuItem value="rice_cooker">전기밥솥</MenuItem>
+            
+            <ListSubheader>개인용 전자기기</ListSubheader>
+            <MenuItem value="smartphone">스마트폰</MenuItem>
+            <MenuItem value="tablet">태블릿</MenuItem>
+            <MenuItem value="laptop">노트북</MenuItem>
+            <MenuItem value="smartwatch">스마트워치</MenuItem>
+            <MenuItem value="earphone">이어폰/헤드폰 (유선/무선)</MenuItem>
+            <MenuItem value="ebook_reader">전자책 리더기</MenuItem>
+          </TextField>
+
+          {isUploading && (
+            <Box sx={{ width: '100%', mb: 2 }}>
+              <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>
+                업로드 중... {Math.round(uploadProgress)}%
+              </Typography>
+              <LinearProgress 
+                variant="determinate" 
+                value={uploadProgress} 
+                sx={{
+                  height: 8,
+                  borderRadius: 4,
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: '#f4c542'
+                  }
+                }}
+              />
+            </Box>
+          )}
+
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button variant="outlined" onClick={handleCloseModal}>
               취소
@@ -252,15 +335,71 @@ const SideLayout = ({ onClose }) => {
               variant="contained"
               startIcon={<CloudUploadIcon />}
               onClick={handleSubmit}
+              disabled={isUploading}
               sx={{
                 backgroundColor: "#f4c542",
                 color: "black",
                 "&:hover": { backgroundColor: "#e0b73a" },
               }}
             >
-              등록하기
+              {isUploading ? "업로드 중..." : "등록하기"}
             </Button>
           </Stack>
+        </Paper>
+      </Modal>
+
+      {/* 업로드 진행 상황 모달 */}
+      <Modal
+        open={isUploading}
+        onClose={() => {}} // 업로드 중에는 닫을 수 없음
+        aria-labelledby="upload-progress-modal"
+      >
+        <Paper
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "85%",
+            maxWidth: "400px",
+            backgroundColor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mb: 3 }}>
+            PDF 설명서 업로드 중
+          </Typography>
+          
+          <Box sx={{ width: "100%", mb: 2 }}>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              {uploadProgress < 100 
+                ? "파일을 업로드하고 있습니다..."
+                : "처리를 완료하고 있습니다..."}
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={uploadProgress}
+              sx={{
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: '#e0e0e0',
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#f4c542',
+                  borderRadius: 5,
+                }
+              }}
+            />
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+              {Math.round(uploadProgress)}%
+            </Typography>
+          </Box>
+          
+          <Typography variant="caption" color="text.secondary">
+            파일 크기에 따라 수 분이 소요될 수 있습니다
+          </Typography>
         </Paper>
       </Modal>
     </Box>

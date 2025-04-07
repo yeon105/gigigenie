@@ -3,6 +3,8 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: #fff;
   text-align: center;
 }
@@ -13,6 +15,8 @@
   border-bottom: 1px solid #eeeeee;
   display: flex;
   justify-content: center;
+  width: 100%;
+  max-width: 400px;
 }
 
 .login-content {
@@ -20,28 +24,17 @@
   display: flex;
   flex-direction: column;
   max-width: 400px;
-  margin: 0 auto;
   width: 100%;
 }
 
-.kakao-button {
-  background-color: #fedd35 !important;
-  color: black !important;
-  font-weight: normal !important;
-  margin-bottom: 12px !important;
-  text-transform: none !important;
-  box-shadow: none !important;
-  height: 48px;
-}
-
-.naver-button {
-  background-color: #00c73b !important;
-  color: white !important;
-  font-weight: normal !important;
-  margin-bottom: 12px !important;
-  text-transform: none !important;
-  box-shadow: none !important;
-  height: 48px;
+.login-wrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
 }
 
 .google-button {
