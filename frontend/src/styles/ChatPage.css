@@ -110,3 +110,17 @@
 .input-send-button:hover {
   background-color: #5a6268;
 }
+
+.input-container input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.input-send-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.message.bot .MuiCircularProgress-root {
+  color: #666666;
+}
