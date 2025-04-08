@@ -1,6 +1,6 @@
-package com.gigigenie.domain.ai.controller;
+package com.gigigenie.domain.chat.controller;
 
-import com.gigigenie.domain.ai.service.PdfService;
+import com.gigigenie.domain.chat.service.PdfService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;

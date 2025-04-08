@@ -1,7 +1,7 @@
-package com.gigigenie.domain.ai.service;
+package com.gigigenie.domain.chat.service;
 
-import com.gigigenie.domain.ai.dto.AnswerResponseDTO;
-import com.gigigenie.domain.ai.dto.QuestionRequestDTO;
+import com.gigigenie.domain.chat.dto.AnswerResponseDTO;
+import com.gigigenie.domain.chat.dto.QuestionRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ChatService {
 
     public Mono<AnswerResponseDTO> getAnswer(QuestionRequestDTO dto) {
         return webClient.post()
-                .uri("/api/search/ask")
+                .uri("/api/chat/ask")
                 .bodyValue(dto)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})

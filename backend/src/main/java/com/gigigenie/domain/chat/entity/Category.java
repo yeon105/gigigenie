@@ -1,4 +1,4 @@
-package com.gigigenie.domain.ai.entity;
+package com.gigigenie.domain.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

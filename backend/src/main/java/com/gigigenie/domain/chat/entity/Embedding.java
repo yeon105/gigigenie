@@ -1,4 +1,4 @@
-package com.gigigenie.domain.ai.entity;
+package com.gigigenie.domain.chat.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;

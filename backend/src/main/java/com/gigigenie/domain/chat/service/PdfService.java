@@ -1,12 +1,12 @@
-package com.gigigenie.domain.ai.service;
+package com.gigigenie.domain.chat.service;
 
-import com.gigigenie.domain.ai.client.EmbeddingClient;
-import com.gigigenie.domain.ai.entity.Category;
-import com.gigigenie.domain.ai.entity.Embedding;
-import com.gigigenie.domain.ai.repository.CategoryRepository;
-import com.gigigenie.domain.ai.repository.EmbeddingRepository;
-import com.gigigenie.domain.ai.util.PdfTextExtractor;
-import com.gigigenie.domain.ai.util.TextSplitter;
+import com.gigigenie.domain.chat.client.EmbeddingClient;
+import com.gigigenie.domain.chat.entity.Category;
+import com.gigigenie.domain.chat.entity.Embedding;
+import com.gigigenie.domain.chat.repository.CategoryRepository;
+import com.gigigenie.domain.chat.repository.EmbeddingRepository;
+import com.gigigenie.domain.chat.util.PdfTextExtractor;
+import com.gigigenie.domain.chat.util.TextSplitter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

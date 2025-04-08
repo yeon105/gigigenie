@@ -1,8 +1,8 @@
-package com.gigigenie.domain.ai.controller;
+package com.gigigenie.domain.chat.controller;
 
-import com.gigigenie.domain.ai.dto.AnswerResponseDTO;
-import com.gigigenie.domain.ai.dto.QuestionRequestDTO;
-import com.gigigenie.domain.ai.service.ChatService;
+import com.gigigenie.domain.chat.dto.AnswerResponseDTO;
+import com.gigigenie.domain.chat.dto.QuestionRequestDTO;
+import com.gigigenie.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

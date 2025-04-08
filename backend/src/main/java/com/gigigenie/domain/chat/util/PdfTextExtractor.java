@@ -1,4 +1,4 @@
-package com.gigigenie.domain.ai.util;
+package com.gigigenie.domain.chat.util;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
