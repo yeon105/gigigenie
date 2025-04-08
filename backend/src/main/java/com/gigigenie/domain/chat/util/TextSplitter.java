@@ -1,4 +1,4 @@
-package com.gigigenie.domain.ai.util;
+package com.gigigenie.domain.chat.util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.gigigenie.domain.ai.repository;
+package com.gigigenie.domain.chat.repository;
 
-import com.gigigenie.domain.ai.entity.Category;
+import com.gigigenie.domain.chat.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

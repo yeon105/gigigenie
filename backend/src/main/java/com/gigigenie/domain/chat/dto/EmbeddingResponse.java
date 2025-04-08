@@ -1,4 +1,4 @@
-package com.gigigenie.domain.ai.dto;
+package com.gigigenie.domain.chat.dto;
 
 import lombok.Data;
 import java.util.List;

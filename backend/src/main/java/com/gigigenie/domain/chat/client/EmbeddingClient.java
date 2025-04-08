@@ -1,6 +1,6 @@
-package com.gigigenie.domain.ai.client;
+package com.gigigenie.domain.chat.client;
 
-import com.gigigenie.domain.ai.dto.EmbeddingResponse;
+import com.gigigenie.domain.chat.dto.EmbeddingResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
