@@ -16,20 +16,24 @@ load_dotenv()
 # ✅ Upstage 임베딩 모델 한 번만 생성 (매번 생성하지 않음)
 embeddings = get_embeddings()
 
-def get_vector_store(collection_name="langchain", embeddings=None):
+async def get_vector_store(collection_name="langchain", embeddings=None):
     """벡터 저장소 인스턴스를 반환합니다."""
     if not embeddings:
         embeddings = get_embeddings()
     
     # 환경 변수에서 데이터베이스 연결 정보 가져오기
-    POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "1234")
-    POSTGRES_DB = os.getenv("POSTGRES_DB", "postgres")
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-    POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
+    POSTGRES_USER = os.getenv("POSTGRES_USER")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_DB = os.getenv("POSTGRES_DB")
+    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+    POSTGRES_PORT = os.getenv("POSTGRES_PORT")
     
-    # 연결 문자열 구성
-    connection = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    # 필수 환경 변수 확인
+    if not all([POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT]):
+        raise ValueError("필수 데이터베이스 환경 변수가 설정되지 않았습니다. POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT를 확인해주세요.")
+    
+    # 비동기 연결 문자열 구성
+    connection = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
     
     return PGVector(
         embeddings=embeddings,
@@ -84,7 +88,7 @@ def get_vector_store(collection_name="langchain", embeddings=None):
 async def search_documents(query_text: str, collection_name: str = "langchain", top_k: int = 3, embeddings=None) -> Dict[str, Any]:
     """벡터 저장소에서 유사 문서를 검색하고 답변을 생성합니다."""
     try:
-        vector_store = get_vector_store(collection_name, embeddings)
+        vector_store = await get_vector_store(collection_name, embeddings)
         docs_and_scores = vector_store.similarity_search_with_score(query_text, k=top_k)
         
         results = []
