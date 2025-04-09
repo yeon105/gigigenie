@@ -13,7 +13,7 @@ function App() {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isLoggedIn = useSelector((state) => state.loginSlice.isLogin);
+  const isLoggedIn = useSelector((state) => state.login?.isLogin || false);
   const sidebarRef = useRef(null);
 
   useEffect(() => {

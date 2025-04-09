@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/gigigenie
     username: postgres
-    password: 1005
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: none
@@ -14,3 +14,7 @@ spring:
 upstage:
   api:
     key: ${UPSTAGE_API_KEY}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}

@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 
 class SearchQuery(BaseModel):
     query: str
-    collection_name: str = "langchain"
+    collection_name: str = "embedding"
     top_k: int = 3
 
 class DocumentResponse(BaseModel):

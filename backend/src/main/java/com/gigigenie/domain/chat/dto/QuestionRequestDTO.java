@@ -12,7 +12,7 @@ public class QuestionRequestDTO {
     private String query;
 
     @JsonProperty("collection_name")
-    private String collection_name = "langchain";
+    private String collection_name = "embedding";
 
     @JsonProperty("top_k")
     private int top_k = 3;
