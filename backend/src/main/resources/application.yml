@@ -14,3 +14,7 @@ spring:
 upstage:
   api:
     key: ${UPSTAGE_API_KEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

@@ -25,7 +25,7 @@ import java.util.Map;
 public class Embedding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @JsonBackReference
     @NotNull
