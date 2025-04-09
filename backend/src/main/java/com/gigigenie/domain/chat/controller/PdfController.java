@@ -28,8 +28,8 @@ public class PdfController {
     public ResponseEntity<?> uploadPdf(
             @Parameter(description = "업로드할 PDF 파일", required = true)
             @RequestParam("file") MultipartFile file,
-            @Parameter(description = "카테고리 이름", required = true)
-            @RequestParam("category") String category,
+            @Parameter(description = "카테고리ID", required = true)
+            @RequestParam("categoryId") Integer categoryId,
             @Parameter(description = "청크 크기 (기본값: 210)")
             @RequestParam(defaultValue = "210") int chunkSize,
             @Parameter(description = "청크 오버랩 (기본값: 50)")
@@ -41,7 +41,7 @@ public class PdfController {
             return ResponseEntity.badRequest().body("PDF 파일만 지원합니다.");
         }
 
-        var result = pdfService.processPdf(file, category, chunkSize, chunkOverlap, name);
+        var result = pdfService.processPdf(file, categoryId, chunkSize, chunkOverlap, name);
         return ResponseEntity.ok(result);
     }
 }
