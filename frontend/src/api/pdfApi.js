@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-export const savePdf = async (name, category, file, onProgress) => {
+export const savePdf = async (name, categoryId, file, onProgress) => {
     try {
         const formData = new FormData();
         formData.append('name', name);
-        formData.append('category', category);
+        formData.append('categoryId', categoryId);
         formData.append('file', file);
 
         const response = await axios.post('http://localhost:8080/api/pdf/upload', formData, {

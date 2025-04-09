@@ -1,16 +1,19 @@
 package com.gigigenie.domain.chat.service;
 
 import com.gigigenie.domain.chat.client.EmbeddingClient;
-import com.gigigenie.domain.chat.entity.Category;
+import com.gigigenie.domain.product.entity.Category;
 import com.gigigenie.domain.chat.entity.Embedding;
-import com.gigigenie.domain.chat.repository.CategoryRepository;
+import com.gigigenie.domain.product.entity.Product;
+import com.gigigenie.domain.product.repository.CategoryRepository;
 import com.gigigenie.domain.chat.repository.EmbeddingRepository;
+import com.gigigenie.domain.product.repository.ProductRepository;
 import com.gigigenie.domain.chat.util.PdfTextExtractor;
 import com.gigigenie.domain.chat.util.TextSplitter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -24,18 +27,22 @@ public class PdfService {
     private final EmbeddingClient embeddingClient;
     private final EmbeddingRepository embeddingRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public Map<String, Object> processPdf(MultipartFile file, String category, int chunkSize, int chunkOverlap, String name) {
+    public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize, int chunkOverlap, String name) {
         String text = extractor.extract(file);
         List<String> chunks = TextSplitter.split(text, chunkSize, chunkOverlap);
 
-        Category cg = categoryRepository.findByCategory(category)
-                .orElseGet(() -> categoryRepository.save(
-                        Category.builder()
-                                .name(name)
-                                .category(category)
-                                .build()
-                ));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Product product = Product.builder()
+                .category(category)
+                .modelName(name)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        productRepository.save(product);
 
         List<Embedding> embeddingEntities = Collections.synchronizedList(new ArrayList<>());
 
@@ -57,10 +64,10 @@ public class PdfService {
                     metadata.put("product_name", name);
 
                     Embedding embeddingEntity = new Embedding();
-                    embeddingEntity.setCategory(cg);
                     embeddingEntity.setDocument(chunk);
                     embeddingEntity.setCmetadata(metadata);
                     embeddingEntity.setEmbedding(embedding);
+                    embeddingEntity.setProduct(product);
 
                     embeddingEntities.add(embeddingEntity);
                 } catch (Exception e) {
@@ -80,6 +87,5 @@ public class PdfService {
                 "category", category
         );
     }
-
 
 }

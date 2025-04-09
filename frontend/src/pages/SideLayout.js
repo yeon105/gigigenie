@@ -30,7 +30,7 @@ const SideLayout = ({ onClose }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [deviceName, setDeviceName] = useState("");
-  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -43,7 +43,7 @@ const SideLayout = ({ onClose }) => {
       setOpenModal(false);
       setSelectedFile(null);
       setDeviceName("");
-      setCategory("");
+      setCategoryId("");
     }
   };
 
@@ -67,7 +67,7 @@ const SideLayout = ({ onClose }) => {
       return;
     }
 
-    if (!category) {
+    if (!categoryId) {
       alert("카테고리를 선택해주세요.");
       return;
     }
@@ -77,7 +77,7 @@ const SideLayout = ({ onClose }) => {
     setOpenModal(false);
 
     try {
-      await savePdf(deviceName, category, selectedFile, (progress) => {
+      await savePdf(deviceName, categoryId, selectedFile, (progress) => {
         setUploadProgress(Math.min(progress * 0.9, 90));
       });
       setUploadProgress(100);
@@ -104,7 +104,7 @@ const SideLayout = ({ onClose }) => {
   };
 
   const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
+    setCategoryId(event.target.value);
   };
 
   return (
@@ -285,27 +285,27 @@ const SideLayout = ({ onClose }) => {
             variant="outlined"
             size="small"
             sx={{ mb: 3 }}
-            value={category}
+            value={categoryId}
             onChange={handleCategoryChange}
           >
             <ListSubheader>가전제품 (가정용 전자기기)</ListSubheader>
-            <MenuItem value="tv">텔레비전 (TV)</MenuItem>
-            <MenuItem value="refrigerator">냉장고</MenuItem>
-            <MenuItem value="washing_machine">세탁기</MenuItem>
-            <MenuItem value="microwave">전자레인지</MenuItem>
-            <MenuItem value="air_conditioner">에어컨</MenuItem>
-            <MenuItem value="vacuum">청소기 (유선/무선)</MenuItem>
-            <MenuItem value="water_purifier">정수기</MenuItem>
-            <MenuItem value="coffee_machine">커피머신</MenuItem>
-            <MenuItem value="rice_cooker">전기밥솥</MenuItem>
+            <MenuItem value="1">텔레비전 (TV)</MenuItem>
+            <MenuItem value="2">냉장고</MenuItem>
+            <MenuItem value="3">세탁기</MenuItem>
+            <MenuItem value="4">전자레인지</MenuItem>
+            <MenuItem value="5">에어컨</MenuItem>
+            <MenuItem value="6">청소기 (유선/무선)</MenuItem>
+            <MenuItem value="7">정수기</MenuItem>
+            <MenuItem value="8">커피머신</MenuItem>
+            <MenuItem value="9">전기밥솥</MenuItem>
             
             <ListSubheader>개인용 전자기기</ListSubheader>
-            <MenuItem value="smartphone">스마트폰</MenuItem>
-            <MenuItem value="tablet">태블릿</MenuItem>
-            <MenuItem value="laptop">노트북</MenuItem>
-            <MenuItem value="smartwatch">스마트워치</MenuItem>
-            <MenuItem value="earphone">이어폰/헤드폰 (유선/무선)</MenuItem>
-            <MenuItem value="ebook_reader">전자책 리더기</MenuItem>
+            <MenuItem value="10">스마트폰</MenuItem>
+            <MenuItem value="11">태블릿</MenuItem>
+            <MenuItem value="12">노트북</MenuItem>
+            <MenuItem value="13">스마트워치</MenuItem>
+            <MenuItem value="14">이어폰/헤드폰 (유선/무선)</MenuItem>
+            <MenuItem value="15">전자책 리더기</MenuItem>
           </TextField>
 
           {isUploading && (

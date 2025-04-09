@@ -1,7 +1,10 @@
 package com.gigigenie.domain.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.gigigenie.domain.product.entity.Product;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +27,11 @@ public class Embedding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @JsonBackReference
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @JdbcTypeCode(SqlTypes.OTHER)
     @Column(columnDefinition = "vector")
@@ -38,4 +43,5 @@ public class Embedding {
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> cmetadata;
+
 }
