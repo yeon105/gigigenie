@@ -10,7 +10,7 @@
 }
 
 .login-header-bar {
-  padding: 24px 20px;
+  padding: 24px 0;
   background-color: #fff;
   border-bottom: 1px solid #eeeeee;
   display: flex;
@@ -20,21 +20,12 @@
 }
 
 .login-content {
-  padding: 40px 20px;
+  padding: 40px 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   max-width: 400px;
   width: 100%;
-}
-
-.login-wrapper {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px;
 }
 
 .google-button {
@@ -46,6 +37,31 @@
   text-transform: none !important;
   box-shadow: none !important;
   height: 48px;
+  width: 80% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.guest-button {
+  background: #555555 !important;
+  color: white !important;
+  font-weight: normal !important;
+  margin-bottom: 16px !important;
+  text-transform: none !important;
+  height: 48px;
+  width: 80% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  background-color: white;
+  border-radius: 8px;
 }
 
 .divider {
@@ -70,18 +86,10 @@
   font-size: 14px;
 }
 
-.guest-button {
-  background: #555555 !important;
-  color: white !important;
-  font-weight: normal !important;
-  margin-bottom: 16px !important;
-  text-transform: none !important;
-  height: 48px;
-}
-
 .terms-text {
   color: #757575;
   margin-top: 12px;
   text-align: center;
   font-size: 12px;
+  width: 80%;
 }

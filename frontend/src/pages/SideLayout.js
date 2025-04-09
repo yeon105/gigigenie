@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   IconButton,
+  LinearProgress,
   List,
   ListItem,
   ListItemText,
@@ -16,15 +17,14 @@ import {
   Stack,
   TextField,
   Typography,
-  LinearProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { savePdf } from "../api/pdfApi";
+import { savePdf } from "../api/chatApi";
 import { logout } from "../redux/LoginSlice";
 
-const SideLayout = ({ onClose }) => {
+const SideLayout = ({ onClose, onProductUpdate }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
@@ -82,6 +82,9 @@ const SideLayout = ({ onClose }) => {
       });
       setUploadProgress(100);
       await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await onProductUpdate();
+      
       alert("제품 설명서가 성공적으로 등록되었습니다.");
     } catch (error) {
       alert("제품 설명서 등록에 실패했습니다.");
@@ -204,6 +207,7 @@ const SideLayout = ({ onClose }) => {
         open={openModal}
         onClose={handleCloseModal}
         aria-labelledby="pdf-upload-modal"
+        container={document.body}
       >
         <Paper
           sx={{
@@ -212,7 +216,7 @@ const SideLayout = ({ onClose }) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "85%",
-            maxWidth: "400px",
+            maxWidth: "350px",
             backgroundColor: "background.paper",
             boxShadow: 24,
             p: 3,
@@ -353,6 +357,7 @@ const SideLayout = ({ onClose }) => {
         open={isUploading}
         onClose={() => {}} // 업로드 중에는 닫을 수 없음
         aria-labelledby="upload-progress-modal"
+        container={document.body}
       >
         <Paper
           sx={{
@@ -361,7 +366,7 @@ const SideLayout = ({ onClose }) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "85%",
-            maxWidth: "400px",
+            maxWidth: "350px",
             backgroundColor: "background.paper",
             boxShadow: 24,
             p: 4,

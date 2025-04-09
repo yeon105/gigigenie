@@ -1,117 +1,38 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
-import SmartphoneIcon from "@mui/icons-material/Smartphone";
-import ComputerIcon from "@mui/icons-material/Computer";
-import TvIcon from "@mui/icons-material/Tv";
-import KitchenIcon from "@mui/icons-material/Kitchen";
-import TabletIcon from "@mui/icons-material/Tablet";
-import SearchIcon from "@mui/icons-material/Search";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import SearchIcon from "@mui/icons-material/Search";
+import { Box, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { productList } from "../api/productApi";
+import { setProducts } from "../redux/ProductSlice";
 import "../styles/DevicePage.css";
 
 const DevicePage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState({});
+  
+  const products = useSelector((state) => state.productSlice.products) || [];
 
-  const devices = [
-    {
-      id: "s24",
-      name: "Samsung S24",
-      icon: <SmartphoneIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "smartphone",
-    },
-    {
-      id: "aaa",
-      name: "Samsung AAA",
-      icon: <SmartphoneIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "smartphone",
-    },
-    {
-      id: "bbb",
-      name: "LG BBB",
-      icon: <TvIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "tv",
-    },
-    {
-      id: "iphone16",
-      name: "Apple iPhone 16",
-      icon: <SmartphoneIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "smartphone",
-    },
-    {
-      id: "ccc",
-      name: "LG CCC",
-      icon: <KitchenIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "appliance",
-    },
-    {
-      id: "ddd",
-      name: "Samsung DDD",
-      icon: <ComputerIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "computer",
-    },
-    {
-      id: "eee",
-      name: "EEE",
-      icon: <KitchenIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "refrigerator",
-    },
-    {
-      id: "fff",
-      name: "FFF",
-      icon: <KitchenIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "appliance",
-    },
-    {
-      id: "ggg",
-      name: "GGG",
-      icon: <SmartphoneIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "smartphone",
-    },
-    {
-      id: "hhh",
-      name: "HHH",
-      icon: <TabletIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "tablet",
-    },
-    {
-      id: "iii",
-      name: "III",
-      icon: <SmartphoneIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "smartphone",
-    },
-    {
-      id: "jjj",
-      name: "JJJ",
-      icon: <ComputerIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "computer",
-    },
-    {
-      id: "kkk",
-      name: "KKK",
-      icon: <TvIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "tv",
-    },
-    {
-      id: "lll",
-      name: "LLL",
-      icon: <KitchenIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "appliance",
-    },
-    {
-      id: "mmm",
-      name: "MMM",
-      icon: <TabletIcon className="device-icon" sx={{ fontSize: 54 }} />,
-      type: "tablet",
-    },
-  ];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await productList();
+        dispatch(setProducts(data));
+      } catch (error) {
+        console.error("제품 목록 가져오기 실패:", error);
+      }
+    };
+    fetchProducts();
+  }, [dispatch]);
 
-  const filteredDevices = devices.filter((device) =>
-    device.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredDevices = products.filter((device) => {
+    if (!device || !device.name) return false;
+    return device.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const handleDeviceClick = (device) => {
     navigate("/chat", { state: { deviceName: device.name } });
@@ -145,7 +66,11 @@ const DevicePage = () => {
             onClick={() => handleDeviceClick(device)}
           >
             <Box className="device-icon-container">
-              {device.icon}
+              <img 
+                src={device.icon} 
+                alt={device.name}
+                style={{ width: '54px', height: '54px' }}
+              />
               <div
                 className={`favorite-icon ${
                   favorites[device.id] ? "active" : ""
