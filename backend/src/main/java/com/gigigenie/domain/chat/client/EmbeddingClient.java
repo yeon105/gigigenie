@@ -29,7 +29,6 @@ public class EmbeddingClient {
     public List<Float> embed(String input) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("input", input);
-//        requestBody.put("model", "embedding-query");
         requestBody.put("model", "text-embedding-3-small");
 
         System.out.println("임베딩 요청 주소: " + EMBEDDING_API_URL);
