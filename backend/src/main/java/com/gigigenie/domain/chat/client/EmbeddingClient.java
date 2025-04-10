@@ -16,9 +16,9 @@ import java.util.Map;
 public class EmbeddingClient {
 
     private final WebClient webClient;
-    private final String EMBEDDING_API_URL = "https://api.upstage.ai/v1/embeddings";
+    private final String EMBEDDING_API_URL = "https://api.openai.com/v1/embeddings";
 
-    public EmbeddingClient(@Value("${upstage.api.key}") String apiKey) {
+    public EmbeddingClient(@Value("${openai.api.key}") String apiKey) {
         this.webClient = WebClient.builder()
                 .baseUrl(EMBEDDING_API_URL)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
@@ -29,7 +29,8 @@ public class EmbeddingClient {
     public List<Float> embed(String input) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("input", input);
-        requestBody.put("model", "embedding-query");
+//        requestBody.put("model", "embedding-query");
+        requestBody.put("model", "text-embedding-3-small");
 
         System.out.println("임베딩 요청 주소: " + EMBEDDING_API_URL);
 
