@@ -4,8 +4,8 @@ import productSlice from "./ProductSlice";
 
 const store = configureStore({
   reducer: {
-    loginSlice: loginSlice,
-    productSlice: productSlice,
+    login: loginSlice,
+    product: productSlice,
   },
 });
 

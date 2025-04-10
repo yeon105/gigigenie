@@ -2,10 +2,7 @@ package com.gigigenie.domain.member.entity;
 
 import com.gigigenie.domain.member.enums.MemberRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,12 +10,14 @@ import java.time.LocalDateTime;
 @Table(name = "member")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
     @Id
-    @Column(name = "member_id", length = 50)
-    private String memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", nullable = false)
+    private Integer memberId;
 
     @Column(nullable = false, length = 255)
     private String email;
@@ -30,10 +29,9 @@ public class Member {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'guest'")
     private MemberRole role;
 
-    @Column(name = "join_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "join_date", nullable = false)
     private LocalDateTime joinDate;
 }
 

@@ -10,16 +10,41 @@ import Header from "./pages/Header";
 import LoginPage from "./pages/LoginPage";
 import SideLayout from "./pages/SideLayout";
 import { setProducts } from "./redux/ProductSlice";
+import { loginSuccess } from "./redux/LoginSlice";
 
 function App() {
   const location = useLocation();
   const dispatch = useDispatch();
   const isLoginPage = location.pathname === "/login";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isLoggedIn = useSelector((state) => state.login?.isLogin || false);
+  const { isLogin, user } = useSelector((state) => state.login || {});
   const sidebarRef = useRef(null);
+  
+  const isUserRole = () => {
+    if (!user || !user.role) return false;
+    return user.role === "USER";
+  };
+  
+  const getUserRole = () => {
+    if (!user || !user.role) return null;
+    return user.role;
+  };
 
-  // 제품 목록 가져오기
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+  
+    if (storedUser && token) {
+      const user = JSON.parse(storedUser);
+      dispatch(loginSuccess({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        message: "로그인 유지 중입니다.",
+      }));
+    }
+  }, []);
+  
   const fetchProducts = async () => {
     try {
       const data = await productList();
@@ -29,12 +54,9 @@ function App() {
     }
   };
 
-  // 초기 로드 시 제품 목록 가져오기
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchProducts();
-    }
-  }, [isLoggedIn]);
+    if (isLogin) fetchProducts();
+  }, [isLogin]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -47,7 +69,6 @@ function App() {
         setSidebarOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -56,7 +77,9 @@ function App() {
 
   useEffect(() => {
     setSidebarOpen(false);
-  }, [isLoggedIn]);
+  }, [isLogin]);
+
+  const showSidebar = !isLoginPage && isLogin && isUserRole();
 
   return (
     <div className="App">
@@ -74,19 +97,13 @@ function App() {
       >
         {!isLoginPage && (
           <Header
-            isLoggedIn={isLoggedIn}
+            isLoggedIn={isLogin}
+            userRole={getUserRole()}
             onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           />
         )}
 
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "auto",
-          }}
-        >
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "auto" }}>
           <Routes>
             <Route path="/" element={<DevicePage />} />
             <Route path="/chat" element={<ChatPage />} />
@@ -94,7 +111,7 @@ function App() {
           </Routes>
         </Box>
 
-        {!isLoginPage && isLoggedIn && (
+        {showSidebar && (
           <Box
             ref={sidebarRef}
             sx={{
@@ -107,10 +124,7 @@ function App() {
               right: sidebarOpen ? { xs: 0, sm: "calc(50% - 240px)" } : "-250px",
             }}
           >
-            <SideLayout 
-              onClose={() => setSidebarOpen(false)} 
-              onProductUpdate={fetchProducts}
-            />
+            <SideLayout onClose={() => setSidebarOpen(false)} onProductUpdate={fetchProducts} />
           </Box>
         )}
       </Box>

@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/gigigenie
@@ -5,7 +8,7 @@ spring:
     password: 1005
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
   servlet:
     multipart:
       max-file-size: 50MB
@@ -19,6 +22,9 @@ openai:
   api:
     key: ${OPENAI_API_KEY}
 
-jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION:3600000}
+app:
+  props:
+    jwt:
+      secret-key: 1234567890123456789012345678901234567890
+      access-token-expiration-period: 150   # 운영시, 15분, 테스트를 위해 150분
+      refresh-token-expiration-period: 1440  # 24시간 60 * 24 = 1440분
