@@ -1,4 +1,4 @@
-package com.gigigenie.config.jwt;
+package com.gigigenie.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;

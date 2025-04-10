@@ -1,6 +1,6 @@
 package com.gigigenie.domain.member.service;
 
-import com.gigigenie.config.jwt.JwtTokenProvider;
+import com.gigigenie.jwt.JwtTokenProvider;
 import com.gigigenie.domain.member.dto.AuthResponseDTO;
 import com.gigigenie.domain.member.dto.LoginRequestDTO;
 import com.gigigenie.domain.member.dto.SignupRequestDTO;

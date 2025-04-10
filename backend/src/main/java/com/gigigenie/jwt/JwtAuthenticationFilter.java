@@ -1,4 +1,4 @@
-package com.gigigenie.config.jwt;
+package com.gigigenie.jwt;
 
 import com.gigigenie.domain.member.entity.Member;
 import com.gigigenie.domain.member.repository.MemberRepository;

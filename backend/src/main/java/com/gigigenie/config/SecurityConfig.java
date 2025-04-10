@@ -29,11 +29,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(httpSecurityCorsConfigurer -> {
-                    httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())
+                    httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+                })
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                        auth.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                                 .anyRequest().authenticated()
                 );
 

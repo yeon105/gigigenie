@@ -11,6 +11,7 @@ import com.gigigenie.domain.chat.util.PdfTextExtractor;
 import com.gigigenie.domain.chat.util.TextSplitter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class PdfService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize, int chunkOverlap, String name) {
         String text = extractor.extract(file);
         List<String> chunks = TextSplitter.split(text, chunkSize, chunkOverlap);
