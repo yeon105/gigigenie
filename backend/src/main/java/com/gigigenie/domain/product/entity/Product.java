@@ -1,8 +1,6 @@
 package com.gigigenie.domain.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.gigigenie.domain.chat.entity.Embedding;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,8 +8,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,9 +37,5 @@ public class Product {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "product")
-    private List<Embedding> embeddings = new ArrayList<>();
 
 }
