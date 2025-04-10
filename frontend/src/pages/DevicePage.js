@@ -15,7 +15,7 @@ const DevicePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState({});
   
-  const products = useSelector((state) => state.productSlice.products) || [];
+  const products = useSelector((state) => state.product.products) || [];
 
   useEffect(() => {
     const fetchProducts = async () => {
