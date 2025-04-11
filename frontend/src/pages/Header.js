@@ -35,7 +35,6 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
         onClick={handleLogoClick}
         style={{ cursor: "pointer" }}
       />
-
       {showMenuButton ? (
         <IconButton
           onClick={onMenuClick}

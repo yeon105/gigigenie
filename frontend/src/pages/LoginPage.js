@@ -92,13 +92,15 @@ const LoginPage = () => {
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
         name: response.name,
-        role: response.role
+        role: response.role,
+        favoriteList: response.favoriteList
       }));
 
       dispatch(loginSuccess({
         id: response.id,
         name: response.name,
         role: response.role,
+        favoriteList: response.favoriteList,
         message: "로그인에 성공했습니다."
       }));
 
@@ -266,21 +268,29 @@ const LoginPage = () => {
             </Typography>
           </Box>
 
-          <Box className="divider">
-            <Typography variant="body2" color="textSecondary">
-              또는
-            </Typography>
-          </Box>
-
-          <Button
-            fullWidth
-            variant="contained"
-            className="guest-button"
-            onClick={handleGuestLogin}
-            sx={{ mt: 2 }}
-          >
-            게스트로 계속하기
-          </Button>
+          {/* 로그인 화면에서만 보이도록 조건부 렌더링 추가 */}
+          {isLogin && (
+            <>
+              <Box className="divider">
+                <Typography variant="body2" color="textSecondary">
+                  또는
+                </Typography>
+              </Box>
+              
+              {/* 게스트 버튼을 form과 동일한 너비의 컨테이너로 감싸기 */}
+              <Box sx={{ width: '80%' }}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  className="guest-button"
+                  onClick={handleGuestLogin}
+                  sx={{ mt: 2 }}
+                >
+                  게스트로 계속하기
+                </Button>
+              </Box>
+            </>
+          )}
 
           <Typography variant="caption" className="terms-text">
             {isLogin
