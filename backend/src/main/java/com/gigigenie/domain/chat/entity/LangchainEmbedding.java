@@ -21,8 +21,8 @@ import java.util.UUID;
 public class LangchainEmbedding {
 
     @Id
-    @Column(nullable = false)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection_id", nullable = false)

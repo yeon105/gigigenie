@@ -2,14 +2,22 @@ import React, { useState } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import "../styles/ChatPage.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { createAnswer } from '../api/chatApi';
 
 const ChatPage = () => {
   const location = useLocation();
-  const { deviceName = "Galaxy S23 Ultra" } = location.state || {};
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { deviceName, productId } = location.state || {};
 
+  // 제품 정보가 없는 경우 메인 페이지로 리다이렉트
+  React.useEffect(() => {
+    if (!deviceName || !productId) {
+      navigate("/");
+    }
+  }, [deviceName, productId, navigate]);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState([
     {
       role: "bot",
@@ -27,9 +35,10 @@ const ChatPage = () => {
     setIsLoading(true);
     
     try {
+      const collectionName = productId ? `product_${productId}_embeddings` : "langchain";
       const response = await createAnswer(
         input,
-        "langchain",
+        collectionName,
         3
       );
 

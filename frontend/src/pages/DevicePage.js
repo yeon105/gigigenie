@@ -73,7 +73,7 @@ const DevicePage = () => {
   });
 
   const handleDeviceClick = (device) => {
-    navigate("/chat", { state: { deviceName: device.name } });
+    navigate("/chat", { state: { deviceName: device.name, productId: device.id } });
   };
 
   const isFavorite = (productId) => {
