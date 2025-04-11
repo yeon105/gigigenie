@@ -40,10 +40,11 @@ function App() {
         id: user.id,
         name: user.name,
         role: user.role,
+        favoriteList: user.favoriteList || [],
         message: "로그인 유지 중입니다.",
       }));
     }
-  }, []);
+  }, []);  
   
   const fetchProducts = async () => {
     try {

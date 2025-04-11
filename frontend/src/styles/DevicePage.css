@@ -67,23 +67,23 @@
 
 .favorite-icon {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: white;
-  color: #bbbbbb;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  top: 0;
+  right: 0;
+  padding: 4px;
+  cursor: pointer;
   z-index: 10;
+  color: gray;
+  transition: color 0.3s ease;
 }
 
 .favorite-icon.active {
-  color: #ff4d8d;
+  color: red;
 }
+
+.favorite-icon:hover {
+  color: #f44336;
+}
+
 
 .device-name {
   font-size: 12px !important;
