@@ -44,7 +44,7 @@ const LoginPage = () => {
       dispatch(loginFailure("비밀번호는 대문자를 포함해야 합니다."));
       return false;
     }
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
       dispatch(loginFailure("비밀번호는 특수문자를 포함해야 합니다."));
       return false;
     }
@@ -63,11 +63,12 @@ const LoginPage = () => {
 
     if (!isLogin && value) {
       try {
-        const { isDuplicate } = await checkEmailDuplicate(value);
-        if (isDuplicate) {
+        const response = await checkEmailDuplicate(value);
+        if (response) {
           setEmailError("이미 사용 중인 이메일입니다.");
         }
       } catch (error) {
+        console.error("이메일 중복 체크 오류:", error);
         setEmailError("이메일 중복 확인 중 오류가 발생했습니다.");
       }
     }
@@ -130,15 +131,24 @@ const LoginPage = () => {
       dispatch(loginFailure("비밀번호가 일치하지 않습니다."));
       return;
     }
+    if (!name || name.length < 2) {
+      dispatch(loginFailure("이름은 2자 이상이어야 합니다."));
+      return;
+    }
 
     try {
       dispatch(loginStart());
-      await joinPost({ email, password, name });
-
-      dispatch(loginSuccess({ message: "회원가입이 완료되었습니다. 로그인 해주세요." }));
-      navigate("/login");
+      const response = await joinPost({ email, password, name });
+      
+      if (response && response.success) {
+        dispatch(loginSuccess({ message: "회원가입이 완료되었습니다. 로그인 해주세요." }));
+        navigate("/login");
+      } else {
+        dispatch(loginFailure(response?.message || "회원가입에 실패했습니다."));
+      }
     } catch (error) {
-      dispatch(loginFailure(error.message || "회원가입에 실패했습니다."));
+      console.error("회원가입 오류:", error);
+      dispatch(loginFailure(error.response?.data?.message || "회원가입 중 오류가 발생했습니다."));
     }
   };
 
