@@ -98,6 +98,8 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
 
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/");
   };
 
