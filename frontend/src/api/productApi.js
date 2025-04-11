@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 
 export const productList = async () => {
     try {
-        const response = await axios.get('http://localhost:8080/api/product/list');
+        const response = await axiosInstance.get('/product/list');
         return response.data;
     } catch (error) {
         console.error("제품 전체조회 실패:", error);

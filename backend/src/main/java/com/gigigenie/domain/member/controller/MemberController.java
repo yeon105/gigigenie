@@ -6,6 +6,7 @@ import com.gigigenie.domain.member.service.MemberService;
 import com.gigigenie.props.JwtProps;
 import com.gigigenie.util.CookieUtil;
 import com.gigigenie.util.JWTUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -25,6 +26,7 @@ public class MemberController {
     private final JWTUtil jwtUtil;
     private final JwtProps jwtProps;
 
+    @Operation(summary = "회원가입")
     @PostMapping("/join")
     public ResponseEntity<?> joinMember(@Valid @RequestBody JoinRequestDTO request) {
         log.info("join: {}", request);
@@ -32,6 +34,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "이메일 중복 확인")
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> isEmailDuplicate(@RequestParam String email) {
         boolean isDuplicate = memberService.isEmailDuplicate(email);
@@ -49,6 +52,7 @@ public class MemberController {
         private String accessToken;
     }
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         log.info("login: {}", loginDTO);
@@ -74,7 +78,7 @@ public class MemberController {
         return ResponseEntity.ok(loginResponseDTO);
     }
 
-    // 로그아웃
+    @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         log.info("logout");
@@ -102,6 +106,7 @@ public class MemberController {
         return leftMin < 60;
     }
 
+    @Operation(summary = "refreshToken 검증 및 재발급")
     @GetMapping("/refresh")
     public Map<String, Object> refresh(
             @CookieValue(value = "refreshToken") String refreshToken,

@@ -35,35 +35,31 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
-        // /api/member/로 시작하는 요청은 필터를 타지 않도록 설정
-        if (path.startsWith("/api/member/login") || path.startsWith("/api/member/join")
-                || path.startsWith("/api/member/refresh") || path.startsWith("/api/member/logout")
-                || path.startsWith("/api/member/kakao") || path.startsWith("/api/member/google")
-                || path.startsWith("/api/member/naver") || path.startsWith("/api/member/github")
-                || path.startsWith("/api/member/facebook")
-                // admin
-                || path.startsWith("/api/admin/member/login") || path.startsWith("/api/admin/member/join")
-                || path.startsWith("/api/admin/member/refresh") || path.startsWith("/api/admin/member/logout")
-        ) {
+
+        // SecurityConfig와 일치하는 경로 패턴 - permitAll() 설정된 경로들
+//        if (path.startsWith("/api/member/") ||
+//                path.startsWith("/api/product/") ||
+//                path.startsWith("/api/test/")) {
+//            return true;
+//        }
+
+        if (path.startsWith("/api/")) {
             return true;
         }
 
-        if (path.startsWith("/api/product/list")) {
+        // 관리자 경로
+        if (path.startsWith("/api/admin/member/login") ||
+                path.startsWith("/api/admin/member/join") ||
+                path.startsWith("/api/admin/member/refresh") ||
+                path.startsWith("/api/admin/member/logout")) {
             return true;
         }
 
-        // Swagger UI 경로 제외 설정
-        if (path.startsWith("/swagger-ui/") || path.startsWith("/v3/api-docs")) {
-            return true;
-        }
-
-        // h2-console 경로 제외 설정
-        if (path.startsWith("/h2-console")) {
-            return true;
-        }
-
-        // /favicon.ico 경로 제외 설정
-        if (path.startsWith("/favicon.ico")) {
+        // Swagger 및 기타 리소스 관련 경로 제외
+        if (path.startsWith("/swagger-ui/") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/h2-console") ||
+                path.startsWith("/favicon.ico")) {
             return true;
         }
 
@@ -72,28 +68,23 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("------------------JWTCheckFilter.................");
-        log.info("request.getServletPath(): {}", request.getServletPath());
-        log.info("..................................................");
+        log.info("------------------JWTCheckFilter 시작------------------");
+        log.info("요청 경로: {}", request.getServletPath());
 
         String autHeaderStr = request.getHeader("Authorization");
+        log.info("Authorization 헤더: {}", autHeaderStr);
 
-        if (autHeaderStr == null
-                || request.getServletPath().startsWith("/api/**")
-
-        ) {
+        if (autHeaderStr == null) {
+            log.info("Authorization 헤더 없음, 필터 통과");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
             String accessToken = autHeaderStr.substring(7).trim();
-            // 쿠키로 가져와
-//            String accessToken = CookieUtil.getTokenFromCookie(request, "accessToken");
-            log.info("JWTCheckFilter accessToken: {}", accessToken);
+            log.info("추출된 토큰: {}", accessToken.substring(0, 20) + "...");
 
             Map<String, Object> claims = jwtUtil.validateToken(accessToken);
-
             log.info("JWT claims: {}", claims);
 
             Integer id = (Integer) claims.get("id");
@@ -101,20 +92,26 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String password = (String) claims.get("password");
             String name = (String) claims.get("name");
             String role = (String) claims.get("role");
+            log.info("추출된 role: {}", role);
+
             MemberRole memberRole = MemberRole.valueOf(role);
             MemberDTO memberDTO = new MemberDTO(id, email, password, name, memberRole);
 
-            log.info("memberDTO: {}", memberDTO);
-            log.info("memberDto.getAuthorities(): {}", memberDTO.getAuthorities());
+            log.info("생성된 memberDTO: {}", memberDTO);
+            log.info("memberDTO의 권한: {}", memberDTO.getAuthorities());
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(memberDTO, password, memberDTO.getAuthorities());
+            log.info("생성된 인증 토큰: {}", authenticationToken);
+            log.info("인증 토큰의 권한: {}", authenticationToken.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            log.info("SecurityContext에 인증 정보 설정 완료");
 
             filterChain.doFilter(request, response);
+            log.info("------------------JWTCheckFilter 종료------------------");
         } catch (Exception e) {
-            log.error("JWT Check Error...........");
+            log.error("JWT 체크 오류: {}", e.getMessage(), e);
             log.error("e.getMessage(): {}", e.getMessage());
 
             ObjectMapper objectMapper = new ObjectMapper();
