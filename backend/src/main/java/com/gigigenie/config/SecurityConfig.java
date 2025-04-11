@@ -15,7 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -35,9 +34,15 @@ public class SecurityConfig {
                 })
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/member/**")).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/product/**")).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/test/**")).permitAll()
+//                        .requestMatchers(new AntPathRequestMatcher("/api/chat/ask")).hasRole("USER")
+//                        .requestMatchers(new AntPathRequestMatcher("/api/pdf/upload")).hasRole("USER")
+//                        .requestMatchers(new AntPathRequestMatcher("/api/favorite/**")).hasRole("USER")
+                        .anyRequest().authenticated()
                 );
 
         return http.build();

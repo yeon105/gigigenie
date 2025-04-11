@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 
 export const savePdf = async (name, categoryId, file, onProgress) => {
     try {
@@ -7,7 +7,7 @@ export const savePdf = async (name, categoryId, file, onProgress) => {
         formData.append('categoryId', categoryId);
         formData.append('file', file);
 
-        const response = await axios.post('http://localhost:8080/api/pdf/upload', formData, {
+        const response = await axiosInstance.post('/pdf/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
@@ -33,7 +33,7 @@ export const createAnswer = async (query, collection_name, top_k) => {
             "top_k": top_k
           }
 
-        const response = await axios.post('http://localhost:8080/api/chat/ask', body);
+        const response = await axiosInstance.post('/chat/ask', body);
         return response.data;
     } catch (error) {
         console.error("답변 생성 실패:", error);
