@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/gigigenie_logo.png";
 import { loginStart, loginSuccess, loginFailure, clearError } from "../redux/LoginSlice";
-import { login as loginApi, signup, checkEmailDuplicate } from "../api/authApi";
+import { loginPost, joinPost, checkEmailDuplicate } from "../api/loginApi";
 import "../styles/LoginPage.css";
 
 const LoginPage = () => {
@@ -32,27 +32,22 @@ const LoginPage = () => {
       dispatch(loginFailure("비밀번호는 최소 8자 이상이어야 합니다."));
       return false;
     }
-    
     if (!/[0-9]/.test(password)) {
       dispatch(loginFailure("비밀번호는 숫자를 포함해야 합니다."));
       return false;
     }
-    
     if (!/[a-z]/.test(password)) {
       dispatch(loginFailure("비밀번호는 소문자를 포함해야 합니다."));
       return false;
     }
-    
     if (!/[A-Z]/.test(password)) {
       dispatch(loginFailure("비밀번호는 대문자를 포함해야 합니다."));
       return false;
     }
-    
     if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
       dispatch(loginFailure("비밀번호는 특수문자를 포함해야 합니다."));
       return false;
     }
-    
     return true;
   };
 
@@ -91,65 +86,63 @@ const LoginPage = () => {
 
     try {
       dispatch(loginStart());
-      const response = await loginApi(email, password);
-      localStorage.setItem('token', response.token);
-      dispatch(loginSuccess({ 
-        member: response.member,
-        message: "로그인에 성공했습니다." 
+      const response = await loginPost(email, password);
+
+      localStorage.setItem("token", response.accessToken);
+      localStorage.setItem("user", JSON.stringify({
+        id: response.id,
+        name: response.name,
+        role: response.role
       }));
+
+      dispatch(loginSuccess({
+        id: response.id,
+        name: response.name,
+        role: response.role,
+        message: "로그인에 성공했습니다."
+      }));
+
       navigate("/");
     } catch (error) {
       dispatch(loginFailure(error.message || "로그인에 실패했습니다."));
     }
   };
 
-  const handleSignup = async () => {
+  const handleGuestLogin = () => {
+    dispatch(loginSuccess({
+      id: null,
+      name: 'Guest',
+      role: ['GUEST'],
+      message: '게스트 로그인'
+    }));
+    navigate("/");
+  };
+
+  const handleJoin = async () => {
     if (!validateEmail(email)) {
       dispatch(loginFailure("올바른 이메일 형식이 아닙니다."));
       return;
     }
-
-    if (!validatePassword(password)) {
-      dispatch(loginFailure("비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."));
-      return;
-    }
-
+    if (!validatePassword(password)) return;
     if (password !== confirmPassword) {
       dispatch(loginFailure("비밀번호가 일치하지 않습니다."));
       return;
     }
 
-    if (emailError) {
-      dispatch(loginFailure("이메일 중복을 확인해주세요."));
-      return;
-    }
-
     try {
       dispatch(loginStart());
-      const response = await signup(name, email, password);
-      setIsLogin(true);
-      dispatch(loginSuccess({ message: "회원가입이 완료되었습니다. 로그인해주세요." }));
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      await joinPost({ email, password, name });
+
+      dispatch(loginSuccess({ message: "회원가입이 완료되었습니다. 로그인 해주세요." }));
+      navigate("/login");
     } catch (error) {
       dispatch(loginFailure(error.message || "회원가입에 실패했습니다."));
     }
   };
 
-  const handleGuestLogin = () => {
-    dispatch(loginSuccess({ role: 'GUEST' }));
-    navigate("/");
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isLogin) {
-      handleLogin();
-    } else {
-      handleSignup();
-    }
+    isLogin ? handleLogin() : handleJoin();
   };
 
   const handleLogoClick = () => {
@@ -160,13 +153,7 @@ const LoginPage = () => {
     <Box className="login-page-container">
       <Box className="login-wrapper">
         <Box className="login-header-bar">
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <img
               src={logo}
               height="50px"

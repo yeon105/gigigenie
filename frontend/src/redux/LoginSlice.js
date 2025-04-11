@@ -19,7 +19,11 @@ const loginSlice = createSlice({
     },
     loginSuccess: (state, action) => {
       state.isLogin = true;
-      state.user = action.payload.member;
+      state.user = {
+        id: action.payload.id,
+        name: action.payload.name,
+        role: action.payload.role
+      };
       state.loading = false;
       state.error = null;
       state.message = action.payload.message;
@@ -31,8 +35,10 @@ const loginSlice = createSlice({
     },
     logout: (state) => {
       state.isLogin = false;
-      state.user = null;
-      state.message = null;
+      state.id = null;
+      state.name = "";
+      state.role = [];
+      state.message = "";
     },
     clearError: (state) => {
       state.error = null;
