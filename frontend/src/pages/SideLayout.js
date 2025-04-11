@@ -109,13 +109,11 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     dispatch(logout());
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    navigate("/");
+    navigate("/login");
   };
 
-  const handleDeviceClick = (deviceName, productId) => {
-    navigate("/chat", { state: { deviceName, productId } });
-  const handleDeviceClick = (device) => {
-    navigate("/chat", { state: { deviceName: device.name } });
+  const handleDeviceClick = (product) => {
+    navigate(`/chat/${product.id}`, { state: { deviceName: product.name } });
     onClose();
   };
 
@@ -125,7 +123,6 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
 
   return (
     <Box
-      ref={sidebarRef}
       sx={{
         width: 300,
         height: "100vh",
@@ -149,53 +146,35 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
           borderColor: "divider",
         }}
       >
-        <CloseIcon />
-      </IconButton>
-
-      <Box sx={{ padding: "20px 15px 10px" }}>
-        <Typography
-          variant="subtitle1"
-          sx={{ fontWeight: "bold", marginBottom: "10px" }}
-        >
-          즐겨찾기 (내 디바이스)
-        </Typography>
-
-        <List sx={{ width: "100%", padding: 0 }}>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("Samsung S24", "Samsung S24")}
-          >
-            <ListItemText primary="Samsung S24" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("Samsung DDD", "Samsung DDD")}
-          >
-            <ListItemText primary="Samsung DDD" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("JJJ", "JJJ")}
-          >
-            <ListItemText primary="JJJ" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("NNN", "NNN")}
-          >
-            <ListItemText primary="NNN" />
-          </ListItem>
-          {favoriteProducts.map((product) => (
-            <ListItem
-              key={product.id}
-              sx={{ padding: "4px 0", cursor: "pointer" }}
-              onClick={() => handleDeviceClick(product)}
-            >
-              <ListItemText primary={product.name} />
-            </ListItem>
-          ))}
-        </List>
+        <Typography variant="h6">메뉴</Typography>
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
       </Box>
+
+      <List
+        sx={{
+          width: "100%",
+          bgcolor: "background.paper",
+          overflow: "auto",
+          flex: 1,
+        }}
+        subheader={
+          <ListSubheader component="div" id="nested-list-subheader">
+            즐겨찾기
+          </ListSubheader>
+        }
+      >
+        {favoriteProducts.map((product) => (
+          <ListItem
+            key={product.id}
+            button
+            onClick={() => handleDeviceClick(product)}
+          >
+            <ListItemText primary={product.name} />
+          </ListItem>
+        ))}
+      </List>
 
       <Box sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
         <Button
