@@ -48,7 +48,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean isEmailDuplicate(String email) {
-        return memberRepository.findByEmail(email).isPresent();
+        try {
+            return memberRepository.findByEmail(email).isPresent();
+        } catch (Exception e) {
+            log.error("이메일 중복 체크 중 오류 발생: {}", e.getMessage());
+            return false;
+        }
     }
 
     @Override

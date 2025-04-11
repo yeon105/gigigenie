@@ -37,7 +37,9 @@ public class MemberController {
     @Operation(summary = "이메일 중복 확인")
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> isEmailDuplicate(@RequestParam String email) {
+        log.info("이메일 중복 체크 요청: {}", email);
         boolean isDuplicate = memberService.isEmailDuplicate(email);
+        log.info("이메일 중복 체크 결과: {} -> {}", email, isDuplicate);
         return ResponseEntity.ok(isDuplicate);
     }
 
