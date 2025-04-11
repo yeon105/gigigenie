@@ -28,13 +28,14 @@ def get_vector_store(collection_name="langchain", embeddings=None):
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
     
-    # 연결 문자열 구성
+    # 연결 문자열 구성 (metadata 컬럼 이름을 cmetadata로 지정)
     connection = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
     
     return PGVector(
         embeddings=embeddings,
         collection_name=collection_name,
-        connection=connection
+        connection=connection,
+        metadata_column="cmetadata"
     )
 
 # async def process_pdf(file_content: bytes, file_name: str, collection_name: str = "langchain", chunk_size: int = 210, chunk_overlap: int = 50) -> Dict[str, Any]:

@@ -1,7 +1,16 @@
 .env
+<<<<<<< Updated upstream
 /__pycache__
 **/__pycache__/
 *.py[cod]
 *$py.class
 .Python
 *.so
+=======
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+>>>>>>> Stashed changes
