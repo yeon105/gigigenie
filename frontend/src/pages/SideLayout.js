@@ -19,7 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { savePdf } from "../api/chatApi";
 import { logout } from "../redux/LoginSlice";
@@ -33,6 +33,13 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
   const [categoryId, setCategoryId] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const userFavorites = useSelector((state) => state.login.favoriteList) || [];
+  const products = useSelector((state) => state.product.products) || [];
+
+  // 즐겨찾기한 제품 목록 필터링
+  const favoriteProducts = products.filter(product => 
+    userFavorites.includes(product.id)
+  );
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -103,8 +110,8 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     navigate("/");
   };
 
-  const handleDeviceClick = (deviceName) => {
-    navigate("/chat", { state: { deviceName } });
+  const handleDeviceClick = (device) => {
+    navigate("/chat", { state: { deviceName: device.name } });
     onClose();
   };
 
@@ -144,30 +151,15 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         </Typography>
 
         <List sx={{ width: "100%", padding: 0 }}>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("Samsung S24")}
-          >
-            <ListItemText primary="Samsung S24" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("Samsung DDD")}
-          >
-            <ListItemText primary="Samsung DDD" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("JJJ")}
-          >
-            <ListItemText primary="JJJ" />
-          </ListItem>
-          <ListItem
-            sx={{ padding: "4px 0", cursor: "pointer" }}
-            onClick={() => handleDeviceClick("NNN")}
-          >
-            <ListItemText primary="NNN" />
-          </ListItem>
+          {favoriteProducts.map((product) => (
+            <ListItem
+              key={product.id}
+              sx={{ padding: "4px 0", cursor: "pointer" }}
+              onClick={() => handleDeviceClick(product)}
+            >
+              <ListItemText primary={product.name} />
+            </ListItem>
+          ))}
         </List>
       </Box>
 

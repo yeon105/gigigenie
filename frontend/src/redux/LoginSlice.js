@@ -1,51 +1,66 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const storedUser = localStorage.getItem("user");
+const storedToken = localStorage.getItem("token");
+
 const initialState = {
-  isLogin: false,
-  user: null,
+  isLogin: !!storedUser && !!storedToken,
   loading: false,
   error: null,
-  message: null
+  message: null,
+  user: storedUser ? JSON.parse(storedUser) : null,
+  favoriteList: storedUser ? JSON.parse(storedUser).favoriteList || [] : [],
 };
 
 const loginSlice = createSlice({
-  name: "loginSlice",
+  name: "login",
   initialState,
   reducers: {
     loginStart: (state) => {
       state.loading = true;
       state.error = null;
-      state.message = null;
     },
     loginSuccess: (state, action) => {
       state.isLogin = true;
-      state.user = {
-        id: action.payload.id,
-        name: action.payload.name,
-        role: action.payload.role
-      };
       state.loading = false;
       state.error = null;
+      state.user = action.payload;
       state.message = action.payload.message;
+      state.favoriteList = action.payload.favoriteList || [];
+      
+      localStorage.setItem("user", JSON.stringify({
+        ...action.payload,
+        favoriteList: action.payload.favoriteList || []
+      }));
     },
     loginFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
-      state.message = null;
     },
     logout: (state) => {
       state.isLogin = false;
-      state.id = null;
-      state.name = "";
-      state.role = [];
-      state.message = "";
+      state.user = null;
+      state.favoriteList = [];
+      
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
     clearError: (state) => {
       state.error = null;
       state.message = null;
+    },
+    updateFavorites: (state, action) => {
+      state.favoriteList = action.payload;
+      
+      if (state.user) {
+        localStorage.setItem("user", JSON.stringify({
+          ...state.user,
+          favoriteList: action.payload
+        }));
+      }
     }
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, clearError } = loginSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, clearError, updateFavorites } = loginSlice.actions;
 export default loginSlice.reducer;
