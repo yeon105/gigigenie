@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 
 class SearchQuery(BaseModel):
     query: str
-    collection_name: str = "langchain"
+    collection_name: str
     top_k: int = 3
 
 class DocumentResponse(BaseModel):
@@ -13,5 +13,5 @@ class DocumentResponse(BaseModel):
 
 class SearchResponse(BaseModel):
     query: str
-    documents: List[DocumentResponse]
+    documents: List[Dict[str, Any]]
     answer: str

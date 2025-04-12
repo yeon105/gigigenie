@@ -23,19 +23,31 @@ def get_vector_store(collection_name="langchain", embeddings=None):
     
     # 환경 변수에서 데이터베이스 연결 정보 가져오기
     POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "1234")
-    POSTGRES_DB = os.getenv("POSTGRES_DB", "postgres")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "1005")
+    POSTGRES_DB = os.getenv("POSTGRES_DB", "gigigenie")
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
     
+    print(f"Connecting to PostgreSQL: {POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}")
+    print(f"Collection name: {collection_name}")
+    print(f"User: {POSTGRES_USER}")
+    print(f"Database: {POSTGRES_DB}")
+    
     # 연결 문자열 구성
     connection = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    print(f"Connection string: {connection}")
     
-    return PGVector(
-        embeddings=embeddings,
-        collection_name=collection_name,
-        connection=connection
-    )
+    try:
+        vector_store = PGVector(
+            embeddings=embeddings,
+            collection_name=collection_name,
+            connection=connection
+        )
+        print("Successfully created PGVector instance")
+        return vector_store
+    except Exception as e:
+        print(f"Error creating PGVector instance: {str(e)}")
+        raise
 
 # async def process_pdf(file_content: bytes, file_name: str, collection_name: str = "langchain", chunk_size: int = 210, chunk_overlap: int = 50) -> Dict[str, Any]:
 #     """PDF 파일을 Spring Boot API를 통해 처리"""
@@ -84,8 +96,13 @@ def get_vector_store(collection_name="langchain", embeddings=None):
 async def search_documents(query_text: str, collection_name: str = "langchain", top_k: int = 3, embeddings=None) -> Dict[str, Any]:
     """벡터 저장소에서 유사 문서를 검색하고 답변을 생성합니다."""
     try:
+        print(f"Searching documents for query: {query_text}")
+        print(f"Using collection: {collection_name}")
+        
         vector_store = get_vector_store(collection_name, embeddings)
         docs_and_scores = vector_store.similarity_search_with_score(query_text, k=top_k)
+        
+        print(f"Found {len(docs_and_scores)} documents")
         
         results = []
         for doc, score in docs_and_scores:
@@ -95,6 +112,7 @@ async def search_documents(query_text: str, collection_name: str = "langchain", 
                 "metadata": doc.metadata,
                 "score": score
             })
+            print(f"Document score: {score}")
 
         answer = await create_answer_with_gemini(query_text, results)
         
@@ -105,4 +123,5 @@ async def search_documents(query_text: str, collection_name: str = "langchain", 
         }
         
     except Exception as e:
+        print(f"Error in search_documents: {str(e)}")
         raise Exception(f"문서 검색 중 오류 발생: {str(e)}")
