@@ -77,9 +77,7 @@ public class PdfService {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 try {
                     List<Float> vector = embeddingClient.embed(chunk);
-                    UUID embeddingUuid = UUID.randomUUID();
                     LangchainEmbedding embedding = LangchainEmbedding.builder()
-                            .uuid(embeddingUuid)
                             .collection(collection)
                             .embedding(vector)
                             .document(chunk)

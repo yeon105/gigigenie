@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { productList } from "./api/productApi";
@@ -30,6 +30,15 @@ function App() {
     return user.role;
   };
 
+  const fetchProducts = useCallback(async () => {
+    try {
+      const data = await productList();
+      dispatch(setProducts(data));
+    } catch (error) {
+      console.error("제품 목록 가져오기 실패:", error);
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
@@ -44,20 +53,11 @@ function App() {
         message: "로그인 유지 중입니다.",
       }));
     }
-  }, []);  
-  
-  const fetchProducts = async () => {
-    try {
-      const data = await productList();
-      dispatch(setProducts(data));
-    } catch (error) {
-      console.error("제품 목록 가져오기 실패:", error);
-    }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     if (isLogin) fetchProducts();
-  }, [isLogin]);
+  }, [isLogin, fetchProducts]);
 
   useEffect(() => {
     function handleClickOutside(event) {

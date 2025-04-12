@@ -4,7 +4,13 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# API 키 확인
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.")
+
+genai.configure(api_key=api_key)
 
 async def create_answer_with_gemini(query: str, retrieved_docs: list[dict]) -> str:
     try:
