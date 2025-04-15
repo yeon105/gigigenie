@@ -1,6 +1,7 @@
 package com.gigigenie.domain.chat.service;
 
 import com.gigigenie.domain.chat.client.EmbeddingClient;
+import com.gigigenie.domain.chat.client.SummaryClient;
 import com.gigigenie.domain.chat.entity.LangchainCollection;
 import com.gigigenie.domain.chat.entity.LangchainEmbedding;
 import com.gigigenie.domain.chat.repository.LangchainCollectionRepository;
@@ -30,6 +31,7 @@ public class PdfService {
 
     private final PdfTextExtractor extractor;
     private final EmbeddingClient embeddingClient;
+    private final SummaryClient summaryClient;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final LangchainCollectionRepository collectionRepository;
@@ -38,7 +40,14 @@ public class PdfService {
     @Transactional
     public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize, int chunkOverlap, String name) {
         String text = extractor.extract(file);
-        List<String> chunks = TextSplitter.split(text, chunkSize, chunkOverlap);
+
+        // 텍스트 요약 생성
+        String summary = summaryClient.summarize(text);
+        log.info("생성된 요약: {}", summary);
+
+        // 요약 텍스트에 대한 임베딩 생성
+        List<Float> summaryEmbedding = embeddingClient.embed(summary);
+        log.info("summaryEmbedding: {}", summaryEmbedding);
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -47,9 +56,13 @@ public class PdfService {
                 .category(category)
                 .modelName(name)
                 .createdAt(LocalDateTime.now())
+                .featureSummary(summary)
+                .featureEmbedding(summaryEmbedding)
                 .build();
 
         productRepository.save(product);
+
+        List<String> chunks = TextSplitter.split(text, chunkSize, chunkOverlap);
 
         String collectionName = "product_" + product.getId() + "_embeddings";
         UUID collectionUuid = UUID.randomUUID();
@@ -106,7 +119,9 @@ public class PdfService {
                 "status", "success",
                 "collection_name", collectionName,
                 "collection_uuid", collectionUuid.toString(),
-                "chunks_saved", embeddingEntities.size()
+                "chunks_saved", embeddingEntities.size(),
+                "product_id", product.getId(),
+                "summary", summary
         );
     }
 

@@ -1,15 +1,13 @@
 package com.gigigenie.domain.chat.entity;
 
+import com.gigigenie.domain.chat.util.VectorType;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
-import org.hibernate.type.SqlTypes;
-import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Entity
 @Table(name = "langchain_pg_embedding")
@@ -28,8 +26,8 @@ public class LangchainEmbedding {
     @JoinColumn(name = "collection_id", nullable = false)
     private LangchainCollection collection;
 
-    @JdbcTypeCode(SqlTypes.OTHER)
-    @Column(columnDefinition = "vector", nullable = false)
+    @Type(VectorType.class)
+    @Column(name = "embedding", columnDefinition = "vector", nullable = false)
     private List<Float> embedding;
 
     @Column(nullable = false, columnDefinition = "TEXT")
