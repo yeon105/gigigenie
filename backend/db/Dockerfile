@@ -1,7 +1,11 @@
-FROM pgvector/pgvector:latest
+FROM postgres:17
 
-# 초기화 SQL 스크립트 복사
+# 빌드 도구 설치 & pgvector 설치
+RUN apt-get update && apt-get install -y \
+    git make gcc postgresql-server-dev-17 && \
+    git clone https://github.com/pgvector/pgvector.git && \
+    cd pgvector && make && make install && \
+    cd .. && rm -rf pgvector
+
+# 초기화 SQL 복사
 COPY gigigenie.sql /docker-entrypoint-initdb.d/
-
-# pgvector 확장 활성화
-RUN echo "shared_preload_libraries = 'vector'" >> /var/lib/postgresql/postgresql.conf
