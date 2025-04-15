@@ -6,7 +6,7 @@ CREATE TYPE user_role AS ENUM ('GUEST', 'USER', 'ADMIN');
 
 -- 3. 기본 테이블 생성 (외래 키 제약 없이)
 CREATE TABLE member (
-  member_id VARCHAR(50) PRIMARY KEY,
+  member_id BIGSERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   name VARCHAR(6) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE product (
 CREATE TABLE favorite (
   favorite_id BIGSERIAL PRIMARY KEY,
   product_id BIGINT NOT NULL,
-  member_id VARCHAR(50) NOT NULL
+  member_id BIGINT NOT NULL
 );
 
 CREATE TABLE query_history (
@@ -41,7 +41,7 @@ CREATE TABLE query_history (
   query_text VARCHAR(255) NOT NULL,
   response_text TEXT NOT NULL,
   query_time BIGINT NOT NULL,
-  member_id VARCHAR(50) NOT NULL
+  member_id BIGINT NOT NULL
 );
 
 -- 4. 그 다음 외래 키 제약 추가
