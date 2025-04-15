@@ -1,11 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: postgres
-    password: 1005
-  jpa:
-    hibernate:
-      ddl-auto: create
+  profiles:
+    active: dev  # 기본적으로 dev 프로파일 사용
   servlet:
     multipart:
       max-file-size: 50MB
@@ -14,3 +9,7 @@ spring:
 upstage:
   api:
     key: ${UPSTAGE_API_KEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

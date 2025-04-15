@@ -4,7 +4,7 @@ import { Button, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
-const Header = ({ isLoggedIn, onMenuClick }) => {
+const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -14,6 +14,8 @@ const Header = ({ isLoggedIn, onMenuClick }) => {
   const handleLogoClick = () => {
     navigate("/");
   };
+
+  const showMenuButton = isLoggedIn && userRole === "USER";
 
   return (
     <Box
@@ -33,8 +35,7 @@ const Header = ({ isLoggedIn, onMenuClick }) => {
         onClick={handleLogoClick}
         style={{ cursor: "pointer" }}
       />
-
-      {isLoggedIn ? (
+      {showMenuButton ? (
         <IconButton
           onClick={onMenuClick}
           aria-label="menu"
