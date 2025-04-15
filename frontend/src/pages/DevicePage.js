@@ -5,7 +5,7 @@ import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { productList } from "../api/productApi";
+import { productList, searchProducts } from "../api/productApi";
 import { addFavorite, deleteFavorite, favoriteList } from "../api/favoriteApi";
 import { setProducts } from "../redux/ProductSlice";
 import { loginSuccess, updateFavorites } from "../redux/LoginSlice";
@@ -20,6 +20,7 @@ const DevicePage = () => {
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const userId = useSelector((state) => state.login.user?.id);
   const user = useSelector((state) => state.login.user);
+  const [searchMode, setSearchMode] = useState('name'); // 'name' 또는 'feature'
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -122,20 +123,46 @@ const DevicePage = () => {
     }
   };
 
+  const handleSearch = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        if (searchMode === 'feature') {
+          // 특징 기반 검색
+          const searchResults = await searchProducts(searchQuery);
+          dispatch(setProducts(searchResults));
+        }
+        // name 모드일 때는 기존 filteredDevices 사용하므로 추가 작업 불필요
+      } catch (error) {
+        console.error("검색 실패:", error);
+      }
+    }
+  };
+
   return (
     <Box className="device-page-container">
       <Box className="search-bar">
         <SearchIcon sx={{ color: "#777777" }} />
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <input
+            type="text"
+            placeholder={searchMode === 'name' ? "제품명으로 검색..." : "제품 특징으로 검색..."}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleSearch}
+          />
+          <select 
+            value={searchMode}
+            onChange={(e) => setSearchMode(e.target.value)}
+            style={{ marginLeft: '10px', padding: '5px' }}
+          >
+            <option value="name">제품명 검색</option>
+            <option value="feature">특징 기반 검색</option>
+          </select>
+        </Box>
       </Box>
 
       <Box className="device-grid">
-        {filteredDevices.map((device) => (
+        {(searchMode === 'name' ? filteredDevices : products).map((device) => (
           <Box
             key={device.id}
             className="device-item"
