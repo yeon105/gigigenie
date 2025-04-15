@@ -1,1 +1,17 @@
+# 환경 파일
 .env
+
+# Python 캐시 무시
+__pycache__/
+models/__pycache__/
+routes/__pycache__/
+services/__pycache__/
+test/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+
+# 기타 무시할 폴더
+langchain/
