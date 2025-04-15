@@ -1,4 +1,5 @@
-FROM openjdk:17-jdk-slim AS build
+# 빌드용 JDK 이미지
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
@@ -17,8 +18,8 @@ COPY src src
 # 의존성 다운로드 및 애플리케이션 빌드
 RUN ./gradlew build -x test
 
-# 런타임 이미지
-FROM openjdk:17-jre-slim
+# 런타임용 JRE 이미지
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
