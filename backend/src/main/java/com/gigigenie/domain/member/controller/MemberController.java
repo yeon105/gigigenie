@@ -3,9 +3,12 @@ package com.gigigenie.domain.member.controller;
 import com.gigigenie.domain.member.dto.JoinRequestDTO;
 import com.gigigenie.domain.member.dto.LoginDTO;
 import com.gigigenie.domain.member.service.MemberService;
+import com.gigigenie.exception.CustomJWTException;
 import com.gigigenie.props.JwtProps;
 import com.gigigenie.util.CookieUtil;
 import com.gigigenie.util.JWTUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -60,12 +63,8 @@ public class MemberController {
         log.info("login: {}", loginDTO);
         Map<String, Object> loginClaims = memberService.login(loginDTO.getId(), loginDTO.getPassword());
 
-        // 로그인 성공시 accessToken, refreshToken 생성
-        String refreshToken = jwtUtil.generateToken(loginClaims, jwtProps.getRefreshTokenExpirationPeriod());
+        String refreshToken = loginClaims.get("refreshToken").toString();
         String accessToken = loginClaims.get("accessToken").toString();
-        // TODO: user 로그인시, refreshToken token 테이블에 저장
-//        tokenService.saveRefreshToken(accessToken, refreshToken, memberService.getMember(loginDTO.getEmail()));
-        // refreshToken 쿠키로 클라이언트에게 전달
         CookieUtil.setTokenCookie(response, "refreshToken", refreshToken, jwtProps.getRefreshTokenExpirationPeriod()); // 1day
 
         LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
@@ -113,24 +112,31 @@ public class MemberController {
     public Map<String, Object> refresh(
             @CookieValue(value = "refreshToken") String refreshToken,
             HttpServletResponse response) {
+
         log.info("refresh refreshToken: {}", refreshToken);
 
-        // RefreshToken 검증
-        Map<String, Object> claims = jwtUtil.validateToken(refreshToken);
+        Map<String, Object> claims;
+        try {
+            claims = jwtUtil.validateToken(refreshToken);
+        } catch (ExpiredJwtException e) {
+            claims = e.getClaims();
+            log.warn("Refresh token expired, using expired claims for reissue.");
+        } catch (JwtException e) {
+            throw new CustomJWTException("Invalid refreshToken");
+        }
+
         log.info("RefreshToken claims: {}", claims);
 
         String newAccessToken = jwtUtil.generateToken(claims, jwtProps.getAccessTokenExpirationPeriod());
-        String newRefreshToken = jwtUtil.generateToken(claims, jwtProps.getRefreshTokenExpirationPeriod());
 
-        // refreshToken 만료시간이 1시간 이하로 남았다면, 새로 발급
+        String refreshToUse = refreshToken;
         if (checkTime((Integer) claims.get("exp"))) {
-            // 새로 발급
-            CookieUtil.setTokenCookie(response, "refreshToken", newRefreshToken, jwtProps.getRefreshTokenExpirationPeriod()); // 1day
-        } else {
-            // 만료시간이 1시간 이상이면, 기존 refreshToken 그대로
-            CookieUtil.setNewRefreshTokenCookie(response, "refreshToken", refreshToken);
+            refreshToUse = jwtUtil.generateToken(claims, jwtProps.getRefreshTokenExpirationPeriod());
         }
+
+        CookieUtil.setTokenCookie(response, "refreshToken", refreshToUse, jwtProps.getRefreshTokenExpirationPeriod());
 
         return Map.of("newAccessToken", newAccessToken);
     }
+
 }
