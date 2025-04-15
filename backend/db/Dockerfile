@@ -1,9 +1,7 @@
 FROM postgres:17
 
-RUN apt-get update && apt-get install -y \
-    git make gcc postgresql-server-dev-17 && \
-    git clone https://github.com/pgvector/pgvector.git && \
-    cd pgvector && make && make install && \
-    cd .. && rm -rf pgvector
+COPY vector/vector.so /usr/lib/postgresql/17/lib/
+COPY vector/vector.control /usr/share/postgresql/17/extension/
+COPY vector/vector--0.8.0.sql /usr/share/postgresql/17/extension/
 
 COPY gigigenie.sql /docker-entrypoint-initdb.d/
