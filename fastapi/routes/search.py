@@ -5,7 +5,7 @@ from models.schema import SearchQuery, SearchResponse
 
 router = APIRouter()
 
-@router.post("/chat/ask", response_model=SearchResponse)
+@router.post("ai/chat/ask", response_model=SearchResponse)
 async def search_endpoint(query: SearchQuery):
     """벡터 저장소에서 유사 문서를 검색하고 답변을 생성"""
     try:
