@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> list() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAllWithCategory();
         return products.stream().map(product -> (
                 ProductResponse.builder()
                         .id(product.getId())
@@ -47,33 +45,18 @@ public class ProductServiceImpl implements ProductService {
             String vectorString = convertToVectorString(queryEmbedding);
             log.info("Generated embedding for query: {} (vector size: {})", query, queryEmbedding.size());
 
-            List<Integer> productIds = productRepository.findSimilarProductIds(vectorString, limit);
+            float similarityThreshold = 0.5f;
+            List<ProductResponse> products = productRepository.findSimilarProducts(vectorString, limit, similarityThreshold);
 
-            if (productIds.isEmpty()) {
-                log.info("No similar products found for query: {}", query);
+            if (products.isEmpty()) {
+                log.info("No similar products found for query: {} with threshold {}", query, similarityThreshold);
                 return List.of();
             }
 
-            log.info("Found {} similar product IDs for query: {}", productIds.size(), query);
+            log.info("Found {} similar products for query: {} with threshold {}",
+                    products.size(), query, similarityThreshold);
 
-            List<Product> products = productRepository.findAllById(productIds);
-
-            Map<Integer, Product> productMap = products.stream()
-                    .collect(Collectors.toMap(Product::getId, product -> product));
-
-            List<ProductResponse> result = new ArrayList<>();
-            for (Integer id : productIds) {
-                Product product = productMap.get(id);
-                if (product != null) {
-                    result.add(ProductResponse.builder()
-                            .id(product.getId())
-                            .name(product.getModelName())
-                            .icon(product.getCategory().getCategoryIcon())
-                            .build());
-                }
-            }
-
-            return result;
+            return products;
         } catch (Exception e) {
             log.error("Error finding similar products for query: {}", query, e);
             return List.of();

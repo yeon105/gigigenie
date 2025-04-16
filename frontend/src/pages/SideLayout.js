@@ -84,15 +84,18 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     setOpenModal(false);
 
     try {
-      await savePdf(deviceName, categoryId, selectedFile, (progress) => {
+      const response = await savePdf(deviceName, categoryId, selectedFile, (progress) => {
         setUploadProgress(Math.min(progress * 0.9, 90));
       });
-      setUploadProgress(100);
-      await new Promise(resolve => setTimeout(resolve, 500));
       
-      await onProductUpdate();
-      
-      alert("제품 설명서가 성공적으로 등록되었습니다.");
+      if (response.status === "exists") {
+        alert(`${response.model_name}은(는) 이미 등록된 모델입니다.`);
+      } else {
+        setUploadProgress(100);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await onProductUpdate();
+        alert("제품 설명서가 성공적으로 등록되었습니다.");
+      }
     } catch (error) {
       alert("제품 설명서 등록에 실패했습니다.");
       console.error("등록 실패:", error);
