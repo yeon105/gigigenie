@@ -22,7 +22,7 @@ public class ChatService {
         log.info("Sending question to FastAPI - Query: {}, Collection: {}", dto.getQuery(), dto.getCollection_name());
 
         return webClient.post()
-                .uri("/ai/chat/ask")
+                .uri("/api/chat/ask")
                 .bodyValue(dto)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
