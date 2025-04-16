@@ -1,7 +1,8 @@
-# services/llm.py
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from services.storage import search_documents
+from typing import Dict, Any
 
 load_dotenv()
 
@@ -31,3 +32,8 @@ async def create_answer_with_gemini(query: str, retrieved_docs: list[dict]) -> s
         
     except Exception as e:
         raise Exception(f"답변 생성 중 오류 발생: {str(e)}")
+
+# 이 함수를 추가
+async def search_documents_with_answer(query_text: str, collection_name: str, top_k: int = 3) -> Dict[str, Any]:
+    """문서 검색 및 답변 생성을 수행합니다."""
+    return await search_documents(query_text, collection_name, top_k)
