@@ -39,13 +39,19 @@ public class PdfService {
 
     @Transactional
     public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize, int chunkOverlap, String name) {
-        String text = extractor.extract(file);
+        Optional<Product> existingProduct = productRepository.findByModelName(name);
+        if (existingProduct.isPresent()) {
+            return Map.of(
+                    "status", "exists",
+                    "message", "이미 등록된 모델입니다.",
+                    "model_name", existingProduct.get().getModelName()
+            );
+        }
 
-        // 텍스트 요약 생성
+        String text = extractor.extract(file);
         String summary = summaryClient.summarize(text);
         log.info("생성된 요약: {}", summary);
 
-        // 요약 텍스트에 대한 임베딩 생성
         List<Float> summaryEmbedding = embeddingClient.embed(summary);
         log.info("summaryEmbedding: {}", summaryEmbedding);
 
