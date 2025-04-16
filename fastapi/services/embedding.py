@@ -20,4 +20,3 @@ def get_llm():
         model="solar-1-mini-chat",
         api_key=api_key
     )
-
