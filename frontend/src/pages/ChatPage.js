@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { 
+  Box, 
+  Typography, 
+  CircularProgress, 
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Stack
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import "../styles/ChatPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,6 +19,7 @@ const ChatPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { deviceName, productId } = location.state || {};
+  const [openExitDialog, setOpenExitDialog] = useState(false);
 
   // 제품 정보가 없는 경우 메인 페이지로 리다이렉트
   React.useEffect(() => {
@@ -59,26 +70,85 @@ const ChatPage = () => {
     setInput("");
   };
 
+  const handleExitClick = () => {
+    setOpenExitDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenExitDialog(false);
+  };
+
+  const handleConfirmExit = () => {
+    navigate('/');
+  };
+
   return (
     <Box className="chat-main">
-      <Box className="chat-header">{deviceName}</Box>
+      <Box className="chat-header">
+        <Typography>{deviceName}</Typography>
+        <Button 
+          onClick={handleExitClick}
+          variant="text"
+          className="exit-button"
+        >
+          채팅방 나가기
+        </Button>
+      </Box>
+
+      <Dialog
+        open={openExitDialog}
+        onClose={handleCloseDialog}
+        PaperProps={{
+          className: "exit-dialog-paper"
+        }}
+      >
+        <DialogTitle className="exit-dialog-title">
+          채팅방 나가기
+        </DialogTitle>
+        <DialogContent>
+          <Typography className="exit-dialog-content">
+            채팅 내역을 저장하시겠습니까?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Stack 
+            direction="row" 
+            spacing={1}
+            className="dialog-buttons"
+          >
+            <Button
+              variant="contained"
+              onClick={handleCloseDialog}
+              className="save-button"
+            >
+              저장하기
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleConfirmExit}
+              className="exit-button-dialog"
+            >
+              나가기
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleCloseDialog}
+              className="cancel-button"
+            >
+              취소
+            </Button>
+          </Stack>
+        </DialogActions>
+      </Dialog>
 
       <Box className="chat-messages">
         {messages.map((msg, idx) => (
           <Box key={idx} className={`message ${msg.role}`}>
             {msg.isLoading ? (
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1,
-                padding: '8px'
-              }}>
+              <Box className="loading-container">
                 <CircularProgress 
                   size={20} 
-                  sx={{ 
-                    color: '#666',
-                    marginRight: '8px'
-                  }} 
+                  className="loading-spinner"
                 />
                 <Typography>답변 생성 중...</Typography>
               </Box>

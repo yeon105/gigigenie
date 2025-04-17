@@ -1,0 +1,31 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo {
+    height: 40px;
+    cursor: pointer;
+}
+
+.menu-button.MuiIconButton-root svg {
+    color: #00c471;
+}
+
+.logout-button.MuiIconButton-root svg {
+    color: #00c471;
+}
+
+.login-btn.MuiButton-root {
+    background-color: #00c471;
+    color: white;
+    text-transform: none;
+}
+
+.login-btn.MuiButton-root:hover {
+    background-color: #00a862;
+}

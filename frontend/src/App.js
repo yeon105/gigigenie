@@ -91,7 +91,7 @@ function App() {
           height: "100vh",
           maxWidth: "480px",
           margin: "0 auto",
-          backgroundColor: "#f0f0f0",
+          backgroundColor: "#f9f9f9",
           position: "relative",
           overflow: "hidden",
         }}
