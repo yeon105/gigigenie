@@ -1,4 +1,7 @@
-﻿-- 1. 먼저 vector 확장 활성화
+﻿DROP DATABASE IF EXISTS gigigenie;
+CREATE DATABASE gigigenie;
+
+-- 1. 먼저 vector 확장 활성화
 CREATE EXTENSION IF NOT EXISTS vector;
 
 -- 2. user_role enum 타입 생성
@@ -7,9 +10,9 @@ CREATE TYPE user_role AS ENUM ('GUEST', 'USER', 'ADMIN');
 -- 3. 기본 테이블 생성 (외래 키 제약 없이)
 CREATE TABLE member (
   member_id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  name VARCHAR(6) NOT NULL,
+  name VARCHAR(20) NOT NULL,
   role user_role DEFAULT 'GUEST' NOT NULL,
   join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
