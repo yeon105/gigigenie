@@ -57,7 +57,7 @@ ALTER TABLE product
   ADD CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES category(category_id);
 
 -- 5. category 데이터 삽입
-INSERT INTO category (category_name, category_icon)
+INSERT INTO public.category (category_name, category_icon)
 VALUES
     ('tv','https://cdn-icons-png.flaticon.com/128/10811/10811514.png'),
     ('refrigerator','https://cdn-icons-png.flaticon.com/128/2969/2969229.png'),
