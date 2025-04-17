@@ -1,14 +1,17 @@
 name: Deploy to EC2 using Docker Compose
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Setup SSH
         uses: appleboy/ssh-action@master
         with:
@@ -18,9 +21,10 @@ jobs:
           script: |
             cd /home/ubuntu/gigigenie || exit 1
             sudo git pull origin main || exit 1
-            # 필요한 경우 불필요한 도커 리소스 정리
+            
+            sudo docker-compose down || true
+            
+            sudo rm -rf ./backend/db/db_data
             sudo docker system prune -af --volumes || true
-            sudo docker-compose down || exit 1
+            
             sudo docker-compose up -d --build || exit 1
-            # 배포 확인
-            sudo docker-compose ps
