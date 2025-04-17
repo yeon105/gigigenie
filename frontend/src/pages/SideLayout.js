@@ -19,14 +19,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { savePdf } from "../api/chatApi";
-import { logout } from "../redux/LoginSlice";
+import "../styles/SideLayout.css";
 
 const SideLayout = ({ onClose, onProductUpdate }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [deviceName, setDeviceName] = useState("");
@@ -106,13 +105,6 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   const handleDeviceClick = (device) => {
     navigate("/chat", { state: { deviceName: device.name, productId: device.id } });
     onClose();
@@ -123,41 +115,27 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#e0e0e0",
-        display: "flex",
-        flexDirection: "column",
-        boxShadow: "-2px 0 5px rgba(0,0,0,0.1)",
-        position: "relative",
-      }}
-    >
+    <Box className="sidebar">
       <IconButton
         onClick={onClose}
-        sx={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-        }}
+        className="sidebar-close-btn"
       >
         <CloseIcon />
       </IconButton>
 
-      <Box sx={{ padding: "20px 15px 10px" }}>
+      <Box className="sidebar-content">
         <Typography
           variant="subtitle1"
-          sx={{ fontWeight: "bold", marginBottom: "10px" }}
+          className="sidebar-title"
         >
           즐겨찾기 (내 디바이스)
         </Typography>
 
-        <List sx={{ width: "100%", padding: 0 }}>
+        <List className="device-list">
           {favoriteProducts.map((product) => (
             <ListItem
               key={product.id}
-              sx={{ padding: "4px 0", cursor: "pointer" }}
+              className="device-item"
               onClick={() => handleDeviceClick(product)}
             >
               <ListItemText primary={product.name} />
@@ -166,11 +144,11 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         </List>
       </Box>
 
-      <Box sx={{ marginTop: "auto", padding: "15px" }}>
+      <Box className="bottom-actions">
         <Box sx={{ marginBottom: "15px" }}>
           <Typography
             variant="body2"
-            sx={{ marginBottom: "5px", fontSize: "12px" }}
+            className="register-hint"
           >
             등록을 원하는 제품의 PDF 설명서를 등록하세요!
           </Typography>
@@ -179,25 +157,11 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             variant="contained"
             startIcon={<AddCircleOutlineIcon />}
             onClick={handleOpenModal}
-            sx={{
-              backgroundColor: "#f4c542",
-              color: "black",
-              "&:hover": { backgroundColor: "#e0b73a" },
-              fontSize: "12px",
-            }}
+            className="register-btn"
           >
             등록
           </Button>
         </Box>
-
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={handleLogout}
-          sx={{ fontSize: "12px" }}
-        >
-          로그아웃
-        </Button>
       </Box>
 
       <Modal
@@ -206,28 +170,8 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         aria-labelledby="pdf-upload-modal"
         container={document.body}
       >
-        <Paper
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "85%",
-            maxWidth: "350px",
-            backgroundColor: "background.paper",
-            boxShadow: 24,
-            p: 3,
-            borderRadius: 2,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
+        <Paper className="upload-modal">
+          <Box className="modal-header">
             <Typography variant="h6" component="h2">
               PDF 설명서 등록
             </Typography>
@@ -246,16 +190,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             size="small"
           />
 
-          <Box
-            sx={{
-              border: "2px dashed #ccc",
-              borderRadius: 2,
-              p: 3,
-              textAlign: "center",
-              mb: 3,
-              backgroundColor: "#f9f9f9",
-            }}
-          >
+          <Box className="file-upload-area">
             <input
               accept="application/pdf"
               style={{ display: "none" }}
@@ -268,7 +203,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
                 variant="outlined"
                 component="span"
                 startIcon={<UploadFileIcon />}
-                sx={{ mb: 2 }}
+                className="file-upload-btn"
               >
                 PDF 파일 선택
               </Button>
@@ -310,38 +245,25 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
           </TextField>
 
           {isUploading && (
-            <Box sx={{ width: '100%', mb: 2 }}>
+            <Box className="progress-container">
               <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>
                 업로드 중... {Math.round(uploadProgress)}%
               </Typography>
               <LinearProgress 
+                className="progress-bar"
                 variant="determinate" 
-                value={uploadProgress} 
-                sx={{
-                  height: 8,
-                  borderRadius: 4,
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: '#f4c542'
-                  }
-                }}
+                value={uploadProgress}
               />
             </Box>
           )}
 
-          <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button variant="outlined" onClick={handleCloseModal}>
-              취소
-            </Button>
+          <Stack className="action-buttons">
             <Button
               variant="contained"
               startIcon={<CloudUploadIcon />}
               onClick={handleSubmit}
               disabled={isUploading}
-              sx={{
-                backgroundColor: "#f4c542",
-                color: "black",
-                "&:hover": { backgroundColor: "#e0b73a" },
-              }}
+              className="submit-btn"
             >
               {isUploading ? "업로드 중..." : "등록하기"}
             </Button>
@@ -356,21 +278,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         aria-labelledby="upload-progress-modal"
         container={document.body}
       >
-        <Paper
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "85%",
-            maxWidth: "350px",
-            backgroundColor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            textAlign: "center",
-          }}
-        >
+        <Paper className="progress-modal">
           <Typography variant="h6" component="h2" sx={{ mb: 3 }}>
             PDF 설명서 업로드 중
           </Typography>
@@ -382,17 +290,9 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
                 : "처리를 완료하고 있습니다..."}
             </Typography>
             <LinearProgress
+              className="progress-indicator"
               variant="determinate"
               value={uploadProgress}
-              sx={{
-                height: 10,
-                borderRadius: 5,
-                backgroundColor: '#e0e0e0',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#f4c542',
-                  borderRadius: 5,
-                }
-              }}
             />
             <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
               {Math.round(uploadProgress)}%

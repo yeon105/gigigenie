@@ -153,7 +153,7 @@ const DevicePage = () => {
           <select 
             value={searchMode}
             onChange={(e) => setSearchMode(e.target.value)}
-            style={{ marginLeft: '10px', padding: '5px' }}
+            className="search-select"
           >
             <option value="name">제품명 검색</option>
             <option value="feature">특징 기반 검색</option>
@@ -172,7 +172,7 @@ const DevicePage = () => {
               <img
                 src={device.icon}
                 alt={device.name}
-                style={{ width: "54px", height: "54px" }}
+                className="device-icon"
               />
               <div
                 className={`favorite-icon ${isFavorite(device.id) ? "active" : ""}`}

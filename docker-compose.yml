@@ -31,6 +31,7 @@ services:
       SPRING_DATASOURCE_DRIVER: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1005
+      SPRING_PROFILES_ACTIVE: prod
     networks:
       - container_network
   fastapi:

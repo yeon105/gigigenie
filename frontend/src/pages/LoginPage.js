@@ -168,10 +168,9 @@ const LoginPage = () => {
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <img
               src={logo}
-              height="50px"
               alt="Logo"
               onClick={handleLogoClick}
-              style={{ cursor: "pointer" }}
+              className="login-logo"
             />
           </Box>
         </Box>
@@ -193,7 +192,7 @@ const LoginPage = () => {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="login-form">
             {!isLogin && (
               <TextField
                 fullWidth
@@ -249,12 +248,6 @@ const LoginPage = () => {
               type="submit"
               className="login-button"
               disabled={loading || (!isLogin && !!emailError)}
-              sx={{
-                backgroundColor: "#f4c542",
-                color: "black",
-                "&:hover": { backgroundColor: "#e0b73a" },
-                mb: 2,
-              }}
             >
               {loading ? "처리 중..." : (isLogin ? "로그인" : "회원가입")}
             </Button>
@@ -271,7 +264,7 @@ const LoginPage = () => {
                   dispatch(clearError());
                   setEmailError("");
                 }}
-                sx={{ color: "#f4c542" }}
+                className="link-text"
               >
                 {isLogin ? "회원가입" : "로그인"}
               </Link>
@@ -282,19 +275,18 @@ const LoginPage = () => {
           {isLogin && (
             <>
               <Box className="divider">
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" className="divider-text">
                   또는
                 </Typography>
               </Box>
               
               {/* 게스트 버튼을 form과 동일한 너비의 컨테이너로 감싸기 */}
-              <Box sx={{ width: '80%' }}>
+              <Box className="guest-button-container">
                 <Button
                   fullWidth
                   variant="contained"
                   className="guest-button"
                   onClick={handleGuestLogin}
-                  sx={{ mt: 2 }}
                 >
                   게스트로 계속하기
                 </Button>
