@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5432:5432
-    volumes:
-      - ./backend/db/db_data:/var/lib/postgresql/data
+    # volumes:
+    #   - ./backend/db/db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1005
