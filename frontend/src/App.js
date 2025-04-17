@@ -10,7 +10,6 @@ import Header from "./pages/Header";
 import LoginPage from "./pages/LoginPage";
 import SideLayout from "./pages/SideLayout";
 import { setProducts } from "./redux/ProductSlice";
-import { loginSuccess } from "./redux/LoginSlice";
 
 function App() {
   const location = useLocation();
@@ -36,22 +35,6 @@ function App() {
       dispatch(setProducts(data));
     } catch (error) {
       console.error("제품 목록 가져오기 실패:", error);
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-  
-    if (storedUser && token) {
-      const user = JSON.parse(storedUser);
-      dispatch(loginSuccess({
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        favoriteList: user.favoriteList || [],
-        message: "로그인 유지 중입니다.",
-      }));
     }
   }, [dispatch]);
 

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { productList, searchProducts } from "../api/productApi";
 import { addFavorite, deleteFavorite, favoriteList } from "../api/favoriteApi";
 import { setProducts } from "../redux/ProductSlice";
-import { loginSuccess, updateFavorites } from "../redux/LoginSlice";
+import { updateFavorites } from "../redux/LoginSlice";
 import "../styles/DevicePage.css";
 
 const DevicePage = () => {
@@ -19,8 +19,7 @@ const DevicePage = () => {
   const products = useSelector((state) => state.product.products) || [];
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const userId = useSelector((state) => state.login.user?.id);
-  const user = useSelector((state) => state.login.user);
-  const [searchMode, setSearchMode] = useState('name'); // 'name' 또는 'feature'
+  const [searchMode, setSearchMode] = useState('name');
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -37,32 +36,13 @@ const DevicePage = () => {
     try {
       const favorites = await favoriteList(userId);
       if (Array.isArray(favorites)) {
-        // Redux 상태 업데이트
         dispatch(updateFavorites(favorites));
-        
-        // localStorage 업데이트
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
-          localStorage.setItem("user", JSON.stringify({
-            ...userData,
-            favoriteList: favorites
-          }));
-        }
       }
     } catch (error) {
       console.error("즐겨찾기 목록 가져오기 실패:", error);
-      
-      // 에러 발생 시 localStorage의 데이터 사용
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        dispatch(updateFavorites(userData.favoriteList || []));
-      }
     }
   }, [userId, dispatch]);
 
-  // 초기 데이터 로드
   useEffect(() => {
     fetchProducts();
     fetchFavorites();
@@ -102,22 +82,11 @@ const DevicePage = () => {
         newFavorites = [...userFavorites, deviceId];
       }
       
-      // Redux 상태 업데이트
       dispatch(updateFavorites(newFavorites));
-      
-      // localStorage 업데이트
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        localStorage.setItem("user", JSON.stringify({
-          ...userData,
-          favoriteList: newFavorites
-        }));
-      }
     } catch (error) {
       console.error("즐겨찾기 토글 실패:", error);
       alert("즐겨찾기 처리 중 오류가 발생했습니다.");
-      await fetchFavorites(); // 실패 시 서버에서 최신 데이터 다시 가져오기
+      await fetchFavorites();
     } finally {
       setIsProcessing(false);
     }
@@ -127,11 +96,9 @@ const DevicePage = () => {
     if (e.key === 'Enter') {
       try {
         if (searchMode === 'feature') {
-          // 특징 기반 검색
           const searchResults = await searchProducts(searchQuery);
           dispatch(setProducts(searchResults));
         }
-        // name 모드일 때는 기존 filteredDevices 사용하므로 추가 작업 불필요
       } catch (error) {
         console.error("검색 실패:", error);
       }
