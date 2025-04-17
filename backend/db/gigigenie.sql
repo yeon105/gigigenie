@@ -1,7 +1,4 @@
-﻿DROP DATABASE IF EXISTS gigigenie;
-CREATE DATABASE gigigenie;
-
--- 1. 먼저 vector 확장 활성화
+﻿-- 1. 먼저 vector 확장 활성화
 CREATE EXTENSION IF NOT EXISTS vector;
 
 -- 2. user_role enum 타입 생성
