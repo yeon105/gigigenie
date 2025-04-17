@@ -21,10 +21,6 @@ jobs:
           script: |
             cd /home/ubuntu/gigigenie || exit 1
             sudo git pull origin main || exit 1
-            
             sudo docker-compose down || true
-            
-            sudo rm -rf ./backend/db/db_data
             sudo docker system prune -af --volumes || true
-            
             sudo docker-compose up -d --build || exit 1
