@@ -104,7 +104,6 @@ CREATE TABLE IF NOT EXISTS public.langchain_pg_embedding
     document text COLLATE pg_catalog."default" NOT NULL,
     cmetadata jsonb,
     embedding vector(1536) NOT NULL,
-    CONSTRAINT langchain_pg_embedding_pkey PRIMARY KEY (id),
     CONSTRAINT fkrbrh7bjxp7ym4rf6xa2fqfjqg FOREIGN KEY (collection_id)
         REFERENCES public.langchain_pg_collection (uuid) MATCH SIMPLE
         ON UPDATE NO ACTION
