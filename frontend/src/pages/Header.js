@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/LoginSlice";
+import { logoutPost } from "../api/loginApi";
 import "../styles/Header.css";
 
 const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
@@ -20,11 +21,16 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
     navigate("/");
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await logoutPost();
+      dispatch(logout());
+      navigate("/");
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      dispatch(logout());
+      navigate("/");
+    }
   };
 
   const showMenuButton = isLoggedIn && userRole === "USER";

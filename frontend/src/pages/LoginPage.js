@@ -89,25 +89,18 @@ const LoginPage = () => {
       dispatch(loginStart());
       const response = await loginPost(email, password);
 
-      localStorage.setItem("token", response.accessToken);
-      localStorage.setItem("user", JSON.stringify({
-        id: response.id,
-        name: response.name,
-        role: response.role,
-        favoriteList: response.favoriteList
-      }));
-
       dispatch(loginSuccess({
         id: response.id,
         name: response.name,
         role: response.role,
-        favoriteList: response.favoriteList,
+        accessToken: response.accessToken,
+        favoriteList: response.favoriteList || [],
         message: "로그인에 성공했습니다."
       }));
 
       navigate("/");
     } catch (error) {
-      dispatch(loginFailure(error.message || "로그인에 실패했습니다."));
+      dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
     }
   };
 
@@ -116,6 +109,7 @@ const LoginPage = () => {
       id: null,
       name: 'Guest',
       role: ['GUEST'],
+      accessToken: null,
       message: '게스트 로그인'
     }));
     navigate("/");
@@ -141,8 +135,11 @@ const LoginPage = () => {
       const response = await joinPost({ email, password, name });
       
       if (response && response.success) {
-        dispatch(loginSuccess({ message: "회원가입이 완료되었습니다. 로그인 해주세요." }));
-        navigate("/login");
+        dispatch(loginSuccess({ 
+          message: "회원가입이 완료되었습니다. 로그인 해주세요.",
+          accessToken: null, 
+        }));
+        setIsLogin(true);
       } else {
         dispatch(loginFailure(response?.message || "회원가입에 실패했습니다."));
       }
@@ -271,7 +268,6 @@ const LoginPage = () => {
             </Typography>
           </Box>
 
-          {/* 로그인 화면에서만 보이도록 조건부 렌더링 추가 */}
           {isLogin && (
             <>
               <Box className="divider">
@@ -280,7 +276,6 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               
-              {/* 게스트 버튼을 form과 동일한 너비의 컨테이너로 감싸기 */}
               <Box className="guest-button-container">
                 <Button
                   fullWidth

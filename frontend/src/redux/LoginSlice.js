@@ -1,15 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const storedUser = localStorage.getItem("user");
-const storedToken = localStorage.getItem("token");
-
 const initialState = {
-  isLogin: !!storedUser && !!storedToken,
+  isLogin: false,
   loading: false,
   error: null,
   message: null,
-  user: storedUser ? JSON.parse(storedUser) : null,
-  favoriteList: storedUser ? JSON.parse(storedUser).favoriteList || [] : [],
+  user: null,
+  accessToken: null,
+  favoriteList: [],
 };
 
 const loginSlice = createSlice({
@@ -24,14 +22,14 @@ const loginSlice = createSlice({
       state.isLogin = true;
       state.loading = false;
       state.error = null;
-      state.user = action.payload;
+      state.user = {
+        id: action.payload.id,
+        name: action.payload.name,
+        role: action.payload.role,
+      };
+      state.accessToken = action.payload.accessToken;
       state.message = action.payload.message;
       state.favoriteList = action.payload.favoriteList || [];
-      
-      localStorage.setItem("user", JSON.stringify({
-        ...action.payload,
-        favoriteList: action.payload.favoriteList || []
-      }));
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -40,10 +38,8 @@ const loginSlice = createSlice({
     logout: (state) => {
       state.isLogin = false;
       state.user = null;
+      state.accessToken = null;
       state.favoriteList = [];
-      
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
     },
     clearError: (state) => {
       state.error = null;
@@ -51,16 +47,21 @@ const loginSlice = createSlice({
     },
     updateFavorites: (state, action) => {
       state.favoriteList = action.payload;
-      
-      if (state.user) {
-        localStorage.setItem("user", JSON.stringify({
-          ...state.user,
-          favoriteList: action.payload
-        }));
-      }
+    },
+    updateAccessToken: (state, action) => {
+      state.accessToken = action.payload;
     }
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, clearError, updateFavorites } = loginSlice.actions;
+export const { 
+  loginStart, 
+  loginSuccess, 
+  loginFailure, 
+  logout, 
+  clearError, 
+  updateFavorites,
+  updateAccessToken 
+} = loginSlice.actions;
+
 export default loginSlice.reducer;
