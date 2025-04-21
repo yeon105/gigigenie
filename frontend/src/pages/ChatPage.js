@@ -48,6 +48,8 @@ const ChatPage = () => {
     setMessages(prev => [...prev, { role: "bot", isLoading: true }]);
     setIsLoading(true);
     
+    const startTime = Date.now();  // 시작 시간 기록
+    
     try {
       const collectionName = productId ? `product_${productId}_embeddings` : "langchain";
       const response = await createAnswer(
@@ -56,15 +58,18 @@ const ChatPage = () => {
         3
       );
 
+      const endTime = Date.now();  // 종료 시간 기록
+      const queryTime = endTime - startTime;  // 소요 시간 계산 (밀리초)
+
       setMessages(prev => [
         ...prev.slice(0, -1),
-        { role: "bot", text: response.answer }
+        { role: "bot", text: response.answer, queryTime }  // queryTime 추가
       ]);
     } catch (error) {
       console.error("답변 생성 실패:", error);
       setMessages(prev => [
         ...prev.slice(0, -1),
-        { role: "bot", text: "죄송합니다. 답변을 생성하는 중에 문제가 발생했습니다." }
+        { role: "bot", text: "죄송합니다. 답변을 생성하는 중에 문제가 발생했습니다.", queryTime: 0 }
       ]);
     } finally {
       setIsLoading(false);
