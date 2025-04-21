@@ -29,3 +29,7 @@
 .login-btn.MuiButton-root:hover {
     background-color: #00a862;
 }
+
+.notification-button {
+    color: #00c471;
+}
