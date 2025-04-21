@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   notifications: [],
+  toastMessage: '',
+  showToast: false,
 };
 
 const notificationSlice = createSlice({
@@ -15,6 +17,7 @@ const notificationSlice = createSlice({
         title: action.payload.title || '',
         time: new Date().toLocaleTimeString(),
         read: false,
+        fontSize: action.payload.fontSize || 'normal'
       });
     },
     removeNotification: (state, action) => {
@@ -31,6 +34,13 @@ const notificationSlice = createSlice({
         read: true
       }));
     },
+    showToastMessage: (state, action) => {
+      state.toastMessage = action.payload;
+      state.showToast = true;
+    },
+    hideToastMessage: (state) => {
+      state.showToast = false;
+    }
   },
 });
 
@@ -38,7 +48,9 @@ export const {
   addNotification, 
   removeNotification, 
   clearAllNotifications,
-  markAllAsRead
+  markAllAsRead,
+  showToastMessage,
+  hideToastMessage
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

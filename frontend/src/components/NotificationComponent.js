@@ -76,7 +76,14 @@ const NotificationComponent = ({
           >
             <CheckCircleIcon color="success" className="notification-icon" />
             <ListItemText
-              primary={notification.title ? `${notification.title}: ${notification.message}` : notification.message}
+              primary={
+                <Typography
+                  variant={notification.fontSize === 'small' ? 'body2' : 'body1'}
+                  sx={{ fontWeight: 500 }}
+                >
+                  {notification.title ? `${notification.title}: ${notification.message}` : notification.message}
+                </Typography>
+              }
               secondary={
                 <Typography
                   component="span"

@@ -113,7 +113,6 @@ function App() {
           </Box>
         )}
       </Box>
-      {/* Toast notification for newly registered products */}
       <ToastNotification />
     </div>
   );

@@ -22,7 +22,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { savePdf } from "../api/chatApi";
 import "../styles/SideLayout.css";
-import { addNotification } from "../redux/NotificationSlice";
+import { addNotification, showToastMessage } from "../redux/NotificationSlice";
 
 const SideLayout = ({ onClose, onProductUpdate }) => {
   const navigate = useNavigate();
@@ -91,15 +91,18 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         
         dispatch(addNotification({
           title: "제품 등록 완료",
-          message: `${deviceName} 설명서가 성공적으로 등록되었습니다.`
+          message: `${deviceName} 설명서가 성공적으로 등록되었습니다.`,
+          fontSize: 'small'
         }));
       }
     } catch (error) {
       alert("제품 설명서 등록에 실패했습니다.");
       console.error("등록 실패:", error);
     } finally {
-      setIsUploading(false);
-      handleCloseModal();
+      setTimeout(() => {
+        setIsUploading(false);
+        handleCloseModal();
+      }, 1000);
     }
   };
 
@@ -155,10 +158,19 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             variant="contained"
             startIcon={<AddCircleOutlineIcon />}
             onClick={handleOpenModal}
+            disabled={isUploading}
             className="register-btn"
           >
-            등록
+            {isUploading ? '등록 중...' : '등록'}
           </Button>
+          {isUploading && (
+            <Typography
+              variant="caption"
+              sx={{ mt: 1, textAlign: 'center', display: 'block', color: '#00c471' }}
+            >
+              제품 설명서를 처리 중입니다...
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -246,11 +258,14 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             <Button
               variant="contained"
               startIcon={<CloudUploadIcon />}
-              onClick={handleSubmit}
+              onClick={() => {
+                dispatch(showToastMessage("등록 완료 시 알림으로 안내됩니다."));
+                setTimeout(() => handleSubmit(), 100);
+              }}
               disabled={isUploading}
               className="submit-btn"
             >
-              등록하기
+              {isUploading ? '등록 중...' : '등록하기'}
             </Button>
           </Stack>
         </Paper>
