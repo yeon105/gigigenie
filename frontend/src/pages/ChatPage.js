@@ -24,7 +24,6 @@ const ChatPage = () => {
   const [openExitDialog, setOpenExitDialog] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // 제품 정보가 없는 경우 메인 페이지로 리다이렉트
   React.useEffect(() => {
     if (!deviceName || !productId) {
       navigate("/");
@@ -48,7 +47,7 @@ const ChatPage = () => {
     setMessages(prev => [...prev, { role: "bot", isLoading: true }]);
     setIsLoading(true);
     
-    const startTime = Date.now();  // 시작 시간 기록
+    const startTime = Date.now();
     
     try {
       const collectionName = productId ? `product_${productId}_embeddings` : "langchain";
@@ -58,12 +57,12 @@ const ChatPage = () => {
         3
       );
 
-      const endTime = Date.now();  // 종료 시간 기록
-      const queryTime = endTime - startTime;  // 소요 시간 계산 (밀리초)
+      const endTime = Date.now();
+      const queryTime = endTime - startTime;
 
       setMessages(prev => [
         ...prev.slice(0, -1),
-        { role: "bot", text: response.answer, queryTime }  // queryTime 추가
+        { role: "bot", text: response.answer, queryTime }
       ]);
     } catch (error) {
       console.error("답변 생성 실패:", error);
