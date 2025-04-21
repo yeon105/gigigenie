@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/history")
+@RequestMapping("/api/chat/history")
 @RestController
 public class QueryHistoryController {
     private final QueryHistoryService historyService;
