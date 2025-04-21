@@ -1,8 +1,8 @@
 ﻿-- 1. 먼저 vector 확장 활성화
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- 2. role enum 타입 생성
-CREATE TYPE role AS ENUM ('GUEST', 'USER', 'ADMIN');
+-- 2. member_role enum 타입 생성
+CREATE TYPE member_role AS ENUM ('GUEST', 'USER', 'ADMIN');
 
 -- 3. 기본 테이블 생성 (외래 키 제약 없이)
 CREATE TABLE member (
@@ -10,7 +10,7 @@ CREATE TABLE member (
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   name VARCHAR(20) NOT NULL,
-  role role DEFAULT 'GUEST' NOT NULL,
+  role member_role DEFAULT 'GUEST' NOT NULL,
   join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
