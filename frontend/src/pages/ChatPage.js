@@ -8,18 +8,21 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Stack
+  Stack,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import "../styles/ChatPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createAnswer } from '../api/chatApi';
+import { createAnswer, saveChatHistory } from '../api/chatApi';
 
 const ChatPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { deviceName, productId } = location.state || {};
   const [openExitDialog, setOpenExitDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   // 제품 정보가 없는 경우 메인 페이지로 리다이렉트
   React.useEffect(() => {
@@ -78,6 +81,26 @@ const ChatPage = () => {
     setOpenExitDialog(false);
   };
 
+  const handleSaveAndExit = async () => {
+    try {
+      await saveChatHistory(messages, productId);
+      setSnackbar({
+        open: true,
+        message: '채팅 내역이 저장되었습니다.',
+        severity: 'success'
+      });
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: '채팅 내역 저장에 실패했습니다.',
+        severity: 'error'
+      });
+    }
+  };
+
   const handleConfirmExit = () => {
     navigate('/');
   };
@@ -118,7 +141,7 @@ const ChatPage = () => {
           >
             <Button
               variant="contained"
-              onClick={handleCloseDialog}
+              onClick={handleSaveAndExit}
               className="save-button"
             >
               저장하기
@@ -140,6 +163,21 @@ const ChatPage = () => {
           </Stack>
         </DialogActions>
       </Dialog>
+
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={1500} 
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       <Box className="chat-messages">
         {messages.map((msg, idx) => (
