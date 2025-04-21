@@ -2,7 +2,7 @@ import { Box, Button, TextField, Typography, Link, Alert } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import logo from "../images/gigigenie_logo.png";
+import logo from "../images/manulo_logo.png";
 import { loginStart, loginSuccess, loginFailure, clearError } from "../redux/LoginSlice";
 import { loginPost, joinPost, checkEmailDuplicate } from "../api/loginApi";
 import "../styles/LoginPage.css";

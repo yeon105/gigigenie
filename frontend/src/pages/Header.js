@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import logo from "../images/gigigenie_logo.png";
+import logo from "../images/manulo_logo.png";
 import { Button, IconButton, Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
