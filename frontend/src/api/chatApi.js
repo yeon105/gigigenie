@@ -47,12 +47,27 @@ export const saveChatHistory = async (messages, productId) => {
         const state = store.getState();
         const memberId = state.login.id;
 
-        // 첫 번째 메시지(인사말)를 제외한 나머지 메시지들을 변환
-        const chatHistory = messages.slice(1).map(msg => ({
-            queryText: msg.role === 'user' ? msg.text : null,
-            responseText: msg.role === 'bot' ? msg.text : null,
-            queryTime: msg.role === 'bot' ? msg.queryTime : null
-        }));
+        const chatHistory = [];
+        const filteredMessages = messages.slice(1);
+        
+        for (let i = 0; i < filteredMessages.length; i += 2) {
+            if (i < filteredMessages.length && filteredMessages[i].role === 'user') {
+                const queryText = filteredMessages[i].text;
+                let responseText = "";
+                let queryTime = 0;
+                
+                if (i + 1 < filteredMessages.length && filteredMessages[i + 1].role === 'bot') {
+                    responseText = filteredMessages[i + 1].text;
+                    queryTime = filteredMessages[i + 1].queryTime || 0;
+                }
+                
+                chatHistory.push({
+                    queryText: queryText,
+                    responseText: responseText,
+                    queryTime: queryTime
+                });
+            }
+        }
 
         const response = await axiosInstance.post('/chat/history/save', {
             memberId: memberId,
