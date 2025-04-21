@@ -50,7 +50,8 @@ export const saveChatHistory = async (messages, productId) => {
         // 첫 번째 메시지(인사말)를 제외한 나머지 메시지들을 변환
         const chatHistory = messages.slice(1).map(msg => ({
             queryText: msg.role === 'user' ? msg.text : null,
-            responseText: msg.role === 'bot' ? msg.text : null
+            responseText: msg.role === 'bot' ? msg.text : null,
+            queryTime: msg.role === 'bot' ? msg.queryTime : null
         }));
 
         const response = await axiosInstance.post('/chat/history/save', {
