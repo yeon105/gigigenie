@@ -5,6 +5,7 @@ const initialState = {
   loading: false,
   error: null,
   message: null,
+  id: null,
   user: null,
   accessToken: null,
   favoriteList: [],
@@ -22,6 +23,7 @@ const loginSlice = createSlice({
       state.isLogin = true;
       state.loading = false;
       state.error = null;
+      state.id = action.payload.id;
       state.user = {
         id: action.payload.id,
         name: action.payload.name,
@@ -37,6 +39,7 @@ const loginSlice = createSlice({
     },
     logout: (state) => {
       state.isLogin = false;
+      state.id = null;
       state.user = null;
       state.accessToken = null;
       state.favoriteList = [];
