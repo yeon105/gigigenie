@@ -29,7 +29,7 @@ public class Member {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", columnDefinition = "role")
+    @Column(name = "role", columnDefinition = "member_role")
     private MemberRole role;
 
     @Column(name = "join_date", nullable = false)
