@@ -1,16 +1,13 @@
 ﻿-- 1. 먼저 vector 확장 활성화
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- 2. member_role enum 타입 생성
-CREATE TYPE member_role AS ENUM ('GUEST', 'USER', 'ADMIN');
-
--- 3. 기본 테이블 생성 (외래 키 제약 없이)
+-- 2. 기본 테이블 생성 (외래 키 제약 없이)
 CREATE TABLE member (
   member_id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   name VARCHAR(20) NOT NULL,
-  role member_role DEFAULT 'GUEST' NOT NULL,
+  role VARCHAR(20) DEFAULT 'GUEST' NOT NULL CHECK (role IN ('GUEST', 'USER', 'ADMIN')),
   join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -44,7 +41,7 @@ CREATE TABLE query_history (
   member_id INTEGER NOT NULL
 );
 
--- 4. 그 다음 외래 키 제약 추가
+-- 3. 그 다음 외래 키 제약 추가
 ALTER TABLE favorite
   ADD CONSTRAINT fk_favorite_product FOREIGN KEY (product_id) REFERENCES product(product_id),
   ADD CONSTRAINT fk_favorite_member FOREIGN KEY (member_id) REFERENCES member(member_id);
@@ -56,7 +53,7 @@ ALTER TABLE query_history
 ALTER TABLE product
   ADD CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES category(category_id);
 
--- 5. category 데이터 삽입
+-- 4. category 데이터 삽입
 INSERT INTO public.category (category_name, category_icon)
 VALUES
     ('tv','https://cdn-icons-png.flaticon.com/128/10811/10811514.png'),
