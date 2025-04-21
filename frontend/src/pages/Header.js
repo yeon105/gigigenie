@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box";
 import logo from "../images/gigigenie_logo.png";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/LoginSlice";
 import { logoutPost } from "../api/loginApi";
@@ -33,6 +34,11 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
     }
   };
 
+  const handleNotificationClick = () => {
+    // TODO: 알림 목록 표시 로직 구현
+    console.log("알림 버튼 클릭");
+  };
+
   const showMenuButton = isLoggedIn && userRole === "USER";
 
   return (
@@ -46,6 +52,15 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
       <Box sx={{ display: 'flex', gap: 1 }}>
         {showMenuButton && (
           <>
+            <IconButton
+              onClick={handleNotificationClick}
+              aria-label="notifications"
+              className="notification-button"
+            >
+              <Badge badgeContent={0} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             <IconButton
               onClick={handleLogout}
               aria-label="logout"
