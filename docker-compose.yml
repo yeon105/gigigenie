@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   db:
+    image: db
     build:
       context: ./backend/db
       dockerfile: Dockerfile
@@ -14,6 +15,7 @@ services:
     networks:
       - container_network
   backend:
+    image: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -33,6 +35,7 @@ services:
     networks:
       - container_network
   fastapi:
+    image: fastapi
     build:
       context: ./fastapi
       dockerfile: Dockerfile
@@ -48,6 +51,7 @@ services:
     networks:
       - container_network
   frontend:
+    image: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
