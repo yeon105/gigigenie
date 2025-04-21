@@ -79,7 +79,7 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
                 color="error"
                 className={unreadCount > 0 ? "badge-animation" : ""}
               >
-                <NotificationsIcon />
+                <NotificationsIcon sx={{ color: '#00c471' }} />
               </Badge>
             </IconButton>
             <IconButton

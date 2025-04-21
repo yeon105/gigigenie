@@ -1,31 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Snackbar, Alert } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { hideToastMessage } from '../redux/NotificationSlice';
 import '../styles/Notification.css';
 
 const ToastNotification = () => {
-  const notifications = useSelector((state) => state.notification.notifications);
-  const [open, setOpen] = useState(false);
-  const [latestNotification, setLatestNotification] = useState(null);
+  const dispatch = useDispatch();
+  const { showToast, toastMessage } = useSelector((state) => state.notification);
 
   useEffect(() => {
-    if (notifications.length > 0) {
-      const newest = notifications[0];
+    if (showToast) {
+      const timer = setTimeout(() => {
+        dispatch(hideToastMessage());
+      }, 5000);
       
-      if (newest && newest.read === false) {
-        setLatestNotification(newest);
-        setOpen(true);
-      }
+      return () => clearTimeout(timer);
     }
-  }, [notifications]);
+  }, [showToast, dispatch]);
 
   const handleClose = () => {
-    setOpen(false);
+    dispatch(hideToastMessage());
   };
 
   return (
     <Snackbar
-      open={open}
+      open={showToast}
       autoHideDuration={5000}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -34,10 +33,14 @@ const ToastNotification = () => {
         onClose={handleClose} 
         severity="success" 
         variant="filled"
-        sx={{ width: '100%' }}
+        sx={{ 
+          width: '100%',
+          backgroundColor: '#00c471',
+          '& .MuiAlert-icon': { color: '#ffffff' }
+        }}
         className="toast-notification"
       >
-        {latestNotification?.title}: {latestNotification?.message}
+        {toastMessage}
       </Alert>
     </Snackbar>
   );

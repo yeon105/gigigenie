@@ -141,7 +141,6 @@
     color: #00a862;
 }
 
-/* 알림 뱃지 애니메이션 */
 .badge-animation .MuiBadge-badge {
     animation: badge-pulse 2s infinite;
 }
