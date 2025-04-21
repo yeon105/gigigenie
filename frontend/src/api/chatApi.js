@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 import store from '../redux/Store';
 
-export const savePdf = async (name, categoryId, file, onProgress) => {
+export const savePdf = async (name, categoryId, file) => {
     try {
         const formData = new FormData();
         formData.append('name', name);
@@ -11,12 +11,6 @@ export const savePdf = async (name, categoryId, file, onProgress) => {
         const response = await axiosInstance.post('/pdf/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
-            },
-            onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.round(
-                    (progressEvent.loaded * 100) / progressEvent.total
-                );
-                onProgress(percentCompleted);
             }
         });
         return response.data;

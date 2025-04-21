@@ -9,6 +9,7 @@ import DevicePage from "./pages/DevicePage";
 import Header from "./pages/Header";
 import LoginPage from "./pages/LoginPage";
 import SideLayout from "./pages/SideLayout";
+import ToastNotification from "./components/ToastNotification";
 import { setProducts } from "./redux/ProductSlice";
 
 function App() {
@@ -112,6 +113,8 @@ function App() {
           </Box>
         )}
       </Box>
+      {/* Toast notification for newly registered products */}
+      <ToastNotification />
     </div>
   );
 }

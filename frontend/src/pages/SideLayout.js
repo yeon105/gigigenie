@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   IconButton,
-  LinearProgress,
   List,
   ListItem,
   ListItemText,
@@ -19,23 +18,23 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { savePdf } from "../api/chatApi";
 import "../styles/SideLayout.css";
+import { addNotification } from "../redux/NotificationSlice";
 
 const SideLayout = ({ onClose, onProductUpdate }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [deviceName, setDeviceName] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const products = useSelector((state) => state.product.products) || [];
 
-  // 즐겨찾기한 제품 목록 필터링
   const favoriteProducts = products.filter(product => 
     userFavorites.includes(product.id)
   );
@@ -79,28 +78,27 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     }
 
     setIsUploading(true);
-    setUploadProgress(0);
     setOpenModal(false);
 
     try {
-      const response = await savePdf(deviceName, categoryId, selectedFile, (progress) => {
-        setUploadProgress(Math.min(progress * 0.9, 90));
-      });
+      const response = await savePdf(deviceName, categoryId, selectedFile);
       
       if (response.status === "exists") {
         alert(`${response.model_name}은(는) 이미 등록된 모델입니다.`);
       } else {
-        setUploadProgress(100);
         await new Promise(resolve => setTimeout(resolve, 500));
         await onProductUpdate();
-        alert("제품 설명서가 성공적으로 등록되었습니다.");
+        
+        dispatch(addNotification({
+          title: "제품 등록 완료",
+          message: `${deviceName} 설명서가 성공적으로 등록되었습니다.`
+        }));
       }
     } catch (error) {
       alert("제품 설명서 등록에 실패했습니다.");
       console.error("등록 실패:", error);
     } finally {
       setIsUploading(false);
-      setUploadProgress(0);
       handleCloseModal();
     }
   };
@@ -244,19 +242,6 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             <MenuItem value="15">전자책 리더기</MenuItem>
           </TextField>
 
-          {isUploading && (
-            <Box className="progress-container">
-              <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>
-                업로드 중... {Math.round(uploadProgress)}%
-              </Typography>
-              <LinearProgress 
-                className="progress-bar"
-                variant="determinate" 
-                value={uploadProgress}
-              />
-            </Box>
-          )}
-
           <Stack className="action-buttons">
             <Button
               variant="contained"
@@ -265,43 +250,9 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
               disabled={isUploading}
               className="submit-btn"
             >
-              {isUploading ? "업로드 중..." : "등록하기"}
+              등록하기
             </Button>
           </Stack>
-        </Paper>
-      </Modal>
-
-      {/* 업로드 진행 상황 모달 */}
-      <Modal
-        open={isUploading}
-        onClose={() => {}} // 업로드 중에는 닫을 수 없음
-        aria-labelledby="upload-progress-modal"
-        container={document.body}
-      >
-        <Paper className="progress-modal">
-          <Typography variant="h6" component="h2" sx={{ mb: 3 }}>
-            PDF 설명서 업로드 중
-          </Typography>
-          
-          <Box sx={{ width: "100%", mb: 2 }}>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {uploadProgress < 100 
-                ? "파일을 업로드하고 있습니다..."
-                : "처리를 완료하고 있습니다..."}
-            </Typography>
-            <LinearProgress
-              className="progress-indicator"
-              variant="determinate"
-              value={uploadProgress}
-            />
-            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-              {Math.round(uploadProgress)}%
-            </Typography>
-          </Box>
-          
-          <Typography variant="caption" color="text.secondary">
-            파일 크기에 따라 수 분이 소요될 수 있습니다
-          </Typography>
         </Paper>
       </Modal>
     </Box>
