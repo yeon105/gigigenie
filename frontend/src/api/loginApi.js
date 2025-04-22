@@ -24,7 +24,7 @@ export const loginPost = async (id, password) => {
 
 // 로그아웃
 export const logoutPost = async () => {
-    const response = await axiosInstance.post(`/logout`);
+    const response = await axiosInstance.post(`/member/logout`);
     return response.data;
 };
 

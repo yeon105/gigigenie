@@ -3,8 +3,6 @@ package com.gigigenie.domain.chat.controller;
 import com.gigigenie.domain.chat.service.PdfService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,19 +22,7 @@ public class PdfController {
 
     @Operation(
             summary = "PDF 파일 업로드 및 임베딩 처리",
-            description = "PDF 업로드 → 텍스트 추출 → 임베딩 → vectorDB 저장 및 파일을 S3에 저장",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "성공적으로 처리됨",
-                            content = @Content(mediaType = "application/json")
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "잘못된 요청 (PDF가 아닌 파일 또는 이미지가 jpg, jpeg, png, webp 형식이 아닌 경우)",
-                            content = @Content(mediaType = "application/json")
-                    )
-            }
+            description = "PDF 업로드 → 텍스트 추출 → 임베딩 → vectorDB 저장 및 파일을 S3에 저장"
     )
     @PostMapping("/upload")
     public ResponseEntity<?> uploadPdf(
