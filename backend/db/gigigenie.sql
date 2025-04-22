@@ -21,6 +21,7 @@ CREATE TABLE product (
   product_id SERIAL PRIMARY KEY,
   category_id INTEGER NOT NULL,
   model_name VARCHAR(255) NOT NULL,
+  model_image VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   feature_summary TEXT NOT NULL,
   feature_embedding vector(1536) NOT NULL
