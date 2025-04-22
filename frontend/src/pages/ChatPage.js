@@ -50,10 +50,9 @@ const ChatPage = () => {
     const startTime = Date.now();
     
     try {
-      const collectionName = productId ? `product_${productId}_embeddings` : "langchain";
       const response = await createAnswer(
         input,
-        collectionName,
+        productId,
         3
       );
 

@@ -24,11 +24,11 @@ export const savePdf = async (name, categoryId, file, imageFile = null) => {
     }
 };
 
-export const createAnswer = async (query, collection_name, top_k) => {
+export const createAnswer = async (query, productId, top_k) => {
     try {
         const body = {
             "query": query,
-            "collection_name": collection_name,
+            "productId": productId,
             "top_k": top_k
           }
 
