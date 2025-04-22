@@ -1,6 +1,5 @@
 package com.gigigenie.domain.chat.service;
 
-import com.gigigenie.domain.chat.client.EmbeddingClient;
 import com.gigigenie.domain.chat.client.SummaryClient;
 import com.gigigenie.domain.chat.entity.LangchainCollection;
 import com.gigigenie.domain.chat.entity.LangchainEmbedding;
@@ -30,7 +29,7 @@ import java.util.concurrent.Executors;
 public class PdfService {
 
     private final PdfTextExtractor extractor;
-    private final EmbeddingClient embeddingClient;
+    private final EmbeddingService embeddingService;
     private final SummaryClient summaryClient;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
@@ -52,7 +51,7 @@ public class PdfService {
         String summary = summaryClient.summarize(text);
         log.info("생성된 요약: {}", summary);
 
-        List<Float> summaryEmbedding = embeddingClient.embed(summary);
+        List<Float> summaryEmbedding = embeddingService.createEmbedding(summary).block();
         log.info("summaryEmbedding: {}", summaryEmbedding);
 
         Category category = categoryRepository.findById(categoryId)
@@ -95,7 +94,7 @@ public class PdfService {
 
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 try {
-                    List<Float> vector = embeddingClient.embed(chunk);
+                    List<Float> vector = embeddingService.createEmbedding(chunk).block();
                     LangchainEmbedding embedding = LangchainEmbedding.builder()
                             .collection(collection)
                             .embedding(vector)

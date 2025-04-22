@@ -2,6 +2,7 @@ package com.gigigenie.domain.chat.controller;
 
 import com.gigigenie.domain.chat.dto.AnswerResponseDTO;
 import com.gigigenie.domain.chat.dto.QuestionRequestDTO;
+import com.gigigenie.domain.chat.dto.SearchResponseDTO;
 import com.gigigenie.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,5 +23,8 @@ public class ChatController {
         return chatService.getAnswer(requestDto);
     }
 
+    @PostMapping("/search")
+    public Mono<SearchResponseDTO> search(@RequestBody QuestionRequestDTO requestDto) {
+        return chatService.getSearchResults(requestDto);
+    }
 }
-

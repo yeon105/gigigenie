@@ -34,22 +34,6 @@ services:
       SPRING_PROFILES_ACTIVE: prod
     networks:
       - container_network
-  fastapi:
-    image: fastapi
-    build:
-      context: ./fastapi
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 8000:8000
-    depends_on:
-      - db
-    env_file:
-      - ./fastapi/.env
-    environment:
-      DATABASE_URL: postgresql://postgres:1005@db:5432/gigigenie
-    networks:
-      - container_network
   frontend:
     image: frontend
     build:
@@ -60,7 +44,6 @@ services:
       - 3000:3000
     depends_on:
       - backend
-      - fastapi
     env_file:
       - ./frontend/.env
     networks:

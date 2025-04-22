@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +32,7 @@ public class SummaryClient {
                 .build();
     }
 
-    public String summarize(String text) {
-        // 텍스트가 너무 길면 앞부분만 사용 (토큰 제한 고려)
+    public Mono<String> summarizeAsync(String text) {
         String limitedText = text.length() > 3000 ? text.substring(0, 3000) : text;
         String prompt = String.format(PROMPT_TEMPLATE, limitedText);
 
@@ -45,25 +45,25 @@ public class SummaryClient {
         requestBody.put("messages", List.of(message));
         requestBody.put("temperature", 0.3);
 
-        try {
-            Map<String, Object> response = webClient.post()
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(Map.class)
-                    .block();
+        return webClient.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .map(response -> {
+                    if (response != null && response.containsKey("choices")) {
+                        List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
+                        if (!choices.isEmpty()) {
+                            Map<String, Object> choice = choices.get(0);
+                            Map<String, Object> messageObj = (Map<String, Object>) choice.get("message");
+                            return (String) messageObj.get("content");
+                        }
+                    }
+                    return "요약 생성 실패";
+                })
+                .onErrorReturn("요약 생성 중 오류 발생");
+    }
 
-            if (response != null && response.containsKey("choices")) {
-                List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
-                if (!choices.isEmpty()) {
-                    Map<String, Object> choice = choices.get(0);
-                    Map<String, Object> messageObj = (Map<String, Object>) choice.get("message");
-                    return (String) messageObj.get("content");
-                }
-            }
-            return "요약 생성 실패";
-        } catch (Exception e) {
-            System.out.println("요약 API 호출 오류: " + e.getMessage());
-            return "요약 생성 중 오류 발생";
-        }
+    public String summarize(String text) {
+        return summarizeAsync(text).block();
     }
 }

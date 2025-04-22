@@ -1,6 +1,6 @@
 package com.gigigenie.domain.product.service;
 
-import com.gigigenie.domain.chat.client.EmbeddingClient;
+import com.gigigenie.domain.chat.service.EmbeddingService;
 import com.gigigenie.domain.product.dto.ProductResponse;
 import com.gigigenie.domain.product.entity.Product;
 import com.gigigenie.domain.product.repository.ProductRepository;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final EmbeddingClient embeddingClient;
+    private final EmbeddingService embeddingService;
 
     @Override
     public List<ProductResponse> list() {
@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponse> findSimilarProducts(String query, Integer limit) {
         try {
-            List<Float> queryEmbedding = embeddingClient.embed(query);
+            List<Float> queryEmbedding = embeddingService.createEmbedding(query).block();
 
             if (queryEmbedding == null || queryEmbedding.isEmpty()) {
                 log.error("Failed to generate embedding for query: {}", query);
