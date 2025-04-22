@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.EC2_HOST_IP }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /home/ubuntu/gigigenie || exit 1
+            cd /home/ubuntu/manulo || exit 1
             sudo git pull origin main || exit 1
             sudo docker-compose down || true
             sudo docker system prune -af --volumes || true
