@@ -137,7 +137,7 @@ const DevicePage = () => {
           >
             <Box className="device-icon-container">
               <img
-                src={device.icon}
+                src={device.url}
                 alt={device.name}
                 className="device-icon"
               />

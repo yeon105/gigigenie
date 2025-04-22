@@ -2,6 +2,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import ImageIcon from "@mui/icons-material/Image";
 import {
   Box,
   Button,
@@ -16,6 +17,11 @@ import {
   Stack,
   TextField,
   Typography,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -32,6 +38,8 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
   const [deviceName, setDeviceName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadImage, setUploadImage] = useState("no");
+  const [selectedImage, setSelectedImage] = useState(null);
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const products = useSelector((state) => state.product.products) || [];
 
@@ -49,6 +57,8 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
       setSelectedFile(null);
       setDeviceName("");
       setCategoryId("");
+      setUploadImage("no");
+      setSelectedImage(null);
     }
   };
 
@@ -58,6 +68,19 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
       setSelectedFile(file);
     } else {
       alert("PDF 파일만 업로드 가능합니다.");
+    }
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+      if (validImageTypes.includes(file.type)) {
+        setSelectedImage(file);
+      } else {
+        alert("JPG, JPEG, PNG, WEBP 형식의 이미지만 업로드 가능합니다.");
+        setSelectedImage(null);
+      }
     }
   };
 
@@ -77,11 +100,21 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
       return;
     }
 
+    if (uploadImage === "yes" && !selectedImage) {
+      alert("이미지를 선택해주세요.");
+      return;
+    }
+
     setIsUploading(true);
     setOpenModal(false);
 
     try {
-      const response = await savePdf(deviceName, categoryId, selectedFile);
+      const response = await savePdf(
+        deviceName, 
+        categoryId, 
+        selectedFile, 
+        uploadImage === "yes" ? selectedImage : null
+      );
       
       if (response.status === "exists") {
         alert(`${response.model_name}은(는) 이미 등록된 모델입니다.`);
@@ -253,6 +286,50 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             <MenuItem value="14">이어폰/헤드폰 (유선/무선)</MenuItem>
             <MenuItem value="15">전자책 리더기</MenuItem>
           </TextField>
+
+          <FormControl component="fieldset" sx={{ mb: 3 }}>
+            <FormLabel component="legend">제품 이미지 업로드</FormLabel>
+            <RadioGroup
+              row
+              name="image-upload-options"
+              value={uploadImage}
+              onChange={(e) => setUploadImage(e.target.value)}
+            >
+              <FormControlLabel value="yes" control={<Radio />} label="등록" />
+              <FormControlLabel value="no" control={<Radio />} label="등록안함" />
+            </RadioGroup>
+          </FormControl>
+
+          {uploadImage === "yes" && (
+            <Box className="file-upload-area" sx={{ mb: 3 }}>
+              <input
+                accept="image/jpeg,image/png,image/jpg,image/webp"
+                style={{ display: "none" }}
+                id="image-file-upload"
+                type="file"
+                onChange={handleImageChange}
+              />
+              <label htmlFor="image-file-upload">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  startIcon={<ImageIcon />}
+                  className="file-upload-btn"
+                >
+                  이미지 선택
+                </Button>
+              </label>
+
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {selectedImage ? selectedImage.name : "선택된 이미지가 없습니다."}
+              </Typography>
+              {selectedImage && (
+                <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: 'text.secondary' }}>
+                  지원 형식: JPG, JPEG, PNG, WEBP
+                </Typography>
+              )}
+            </Box>
+          )}
 
           <Stack className="action-buttons">
             <Button

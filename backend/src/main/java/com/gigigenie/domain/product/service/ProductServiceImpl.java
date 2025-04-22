@@ -27,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
                 ProductResponse.builder()
                         .id(product.getId())
                         .name(product.getModelName())
-                        .icon(product.getCategory().getCategoryIcon())
+                        .url(product.getModelImage() != null ? product.getModelImage() : product.getCategory().getCategoryIcon())
                         .build())).collect(Collectors.toList());
     }
 
@@ -55,6 +55,12 @@ public class ProductServiceImpl implements ProductService {
 
             log.info("Found {} similar products for query: {} with threshold {}",
                     products.size(), query, similarityThreshold);
+
+            products.forEach(product -> {
+                if(product.getUrl() == null || product.getUrl().isEmpty()) {
+                    product.setUrl(product.getIcon());
+                }
+            });
 
             return products;
         } catch (Exception e) {
