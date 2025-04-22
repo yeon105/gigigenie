@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class QuestionRequestDTO {
     private String query;
 
-    @JsonProperty("collection_name")
-    private String collection_name;
+    @JsonProperty("productId")
+    private String productId;
 
     @JsonProperty("top_k")
     private int top_k = 3;
