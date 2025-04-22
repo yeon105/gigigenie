@@ -42,6 +42,14 @@ CREATE TABLE query_history (
   member_id INTEGER NOT NULL
 );
 
+CREATE TABLE prompt_templates (
+  id VARCHAR(255) PRIMARY KEY,
+  template TEXT NOT NULL,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  description VARCHAR(255),
+  active BOOLEAN DEFAULT TRUE NOT NULL
+);
+
 -- 3. 그 다음 외래 키 제약 추가
 ALTER TABLE favorite
   ADD CONSTRAINT fk_favorite_product FOREIGN KEY (product_id) REFERENCES product(product_id),

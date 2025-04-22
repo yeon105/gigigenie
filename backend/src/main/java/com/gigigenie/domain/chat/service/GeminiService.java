@@ -3,6 +3,7 @@ package com.gigigenie.domain.chat.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gigigenie.domain.chat.dto.SearchResultDTO;
+import com.gigigenie.domain.prompt.service.PromptService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class GeminiService {
 
     private final WebClient geminiWebClient;
     private final ObjectMapper objectMapper;
+    private final PromptService promptService;
     private final String MODEL = "gemini-2.0-flash";
 
     @Value("${gemini.api.key}")
@@ -34,14 +36,8 @@ public class GeminiService {
                 .map(SearchResultDTO::getContent)
                 .collect(Collectors.joining("\n\n"));
 
-        String prompt = String.format("""
-                사용자의 질문: %s
-                
-                아래는 검색된 문서들의 내용입니다:
-                %s
-
-                위 내용을 바탕으로 사용자의 질문에 대해 정확도가 높고 사용자가 쉽게 이해할 수 있게 간단히 요약해서 설명해주세요.
-                """, query, context);
+        String promptTemplate = promptService.getPromptTemplate("gemini_answer");
+        String prompt = String.format(promptTemplate, query, context);
 
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
