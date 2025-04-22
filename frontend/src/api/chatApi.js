@@ -7,10 +7,7 @@ export const savePdf = async (name, categoryId, file, imageFile = null) => {
         formData.append('name', name);
         formData.append('categoryId', categoryId);
         formData.append('file', file);
-        
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
+        formData.append('image', imageFile || null);
 
         const response = await axiosInstance.post('/pdf/upload', formData, {
             headers: {
