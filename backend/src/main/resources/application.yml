@@ -6,10 +6,12 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
 
-upstage:
+gemini:
   api:
-    key: ${UPSTAGE_API_KEY}
+    url: https://generativelanguage.googleapis.com/v1
+    key: ${GEMINI_API_KEY}
 
 openai:
   api:
+    url: https://api.openai.com/v1
     key: ${OPENAI_API_KEY}
