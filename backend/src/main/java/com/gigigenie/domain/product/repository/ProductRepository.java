@@ -14,7 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findAllWithCategory();
 
     @Query(value =
-            "SELECT p.product_id as id, p.model_name as name, c.category_icon as icon " +
+            "SELECT p.product_id as id, p.model_name as name, p.model_image as image, c.category_icon as icon " +
                     "FROM product p " +
                     "JOIN category c ON p.category_id = c.category_id " +
                     "JOIN (SELECT product_id, feature_embedding FROM product " +

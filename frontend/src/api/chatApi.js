@@ -1,12 +1,16 @@
 import axiosInstance from './axiosInstance';
 import store from '../redux/Store';
 
-export const savePdf = async (name, categoryId, file) => {
+export const savePdf = async (name, categoryId, file, imageFile = null) => {
     try {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('categoryId', categoryId);
         formData.append('file', file);
+        
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
 
         const response = await axiosInstance.post('/pdf/upload', formData, {
             headers: {

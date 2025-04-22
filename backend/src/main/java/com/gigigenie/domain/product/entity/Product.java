@@ -36,6 +36,10 @@ public class Product {
     @Column(name = "model_name", nullable = false)
     private String modelName;
 
+    @Size(max = 255)
+    @Column(name = "model_image")
+    private String modelImage;
+
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at", nullable = false)

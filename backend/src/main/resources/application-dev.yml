@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/gigigenie
@@ -17,6 +14,19 @@ app:
       secret-key: 1234567890123456789012345678901234567890
       access-token-expiration-period: 150
       refresh-token-expiration-period: 1440
+
+    aws:
+      key:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      s3:
+        bucket-name: ${AWS_S3_BUCKET_NAME}
+        region: ${AWS_REGION}
+
+org:
+  file:
+    upload:
+      path: upload
 
 cors:
   allowed-origins: http://localhost:3000,http://127.0.0.1:3000

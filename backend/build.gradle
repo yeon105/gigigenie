@@ -57,6 +57,12 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'dev.langchain4j:langchain4j-pgvector:0.28.0'
 
+    // aws s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // thumbnailator <- 이미지 크기 조절 및 썸네일 생성을 쉽게 할 수 있도록 지원하는 Java 라이브러리
+    implementation 'net.coobird:thumbnailator:0.4.19'
+
     implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
     // LangChain4j
