@@ -36,7 +36,7 @@ public class PdfController {
             @RequestParam(defaultValue = "50") int chunkOverlap,
             @Parameter(description = "제품 이름", required = true)
             @RequestParam("name") String name,
-            @Parameter(description = "업로드할 제품 이미지 (jpg, jpeg, png, webp 형식만 허용)")
+            @Parameter(description = "업로드할 제품 이미지 (jpg, jpeg, png, webp 형식만 허용)", required = false)
             @RequestParam("image") MultipartFile image
     ) {
         if (!Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf")) {
