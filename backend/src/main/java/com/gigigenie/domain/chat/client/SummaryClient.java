@@ -1,5 +1,6 @@
 package com.gigigenie.domain.chat.client;
 
+import com.gigigenie.domain.prompt.service.PromptService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,25 +17,23 @@ public class SummaryClient {
 
     private final WebClient webClient;
     private final String CHAT_API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String PROMPT_TEMPLATE = """
-            다음은 전자제품의 사용설명서입니다. 이 제품이 어떤 제품인지 사람에게 설명하듯 핵심 특징만 뽑아 자연어로 요약해줘. 
-            예시 출력:
-            "iOS 기반 스마트폰이며, 트리플 카메라를 탑재했고 2022년 애플에서 출시됨"
-            [문서 입력]
-            %s
-            """;
+    private final PromptService promptService;
 
-    public SummaryClient(@Value("${openai.api.key}") String apiKey) {
+    public SummaryClient(
+            @Value("${openai.api.key}") String apiKey,
+            PromptService promptService) {
         this.webClient = WebClient.builder()
                 .baseUrl(CHAT_API_URL)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
+        this.promptService = promptService;
     }
 
     public Mono<String> summarizeAsync(String text) {
         String limitedText = text.length() > 3000 ? text.substring(0, 3000) : text;
-        String prompt = String.format(PROMPT_TEMPLATE, limitedText);
+        String promptTemplate = promptService.getPromptTemplate("summary");
+        String prompt = String.format(promptTemplate, limitedText);
 
         Map<String, Object> message = new HashMap<>();
         message.put("role", "user");
