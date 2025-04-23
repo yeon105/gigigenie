@@ -39,8 +39,7 @@ CREATE TABLE query_history (
   query_text VARCHAR(255) NOT NULL,
   response_text TEXT NOT NULL,
   query_time BIGINT NOT NULL,
-  member_id INTEGER NOT NULL,
-  session_id VARCHAR(255) NOT NULL
+  member_id INTEGER NOT NULL
 );
 
 CREATE TABLE prompt_templates (
