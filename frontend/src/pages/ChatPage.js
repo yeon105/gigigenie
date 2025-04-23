@@ -16,7 +16,7 @@ import SendIcon from "@mui/icons-material/Send";
 import "../styles/ChatPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectProduct, continueChat, createNewChat, endChat, getHistories } from '../api/chatApi';
+import { selectProduct, continueChat, createNewChat, endChat, getHistories, getRecentProducts  } from '../api/chatApi';
 
 const ChatPage = () => {
   const location = useLocation();
@@ -182,6 +182,8 @@ const ChatPage = () => {
     if (sessionId && isLoggedIn) {
       try {
         await endChat(sessionId);
+        await getRecentProducts();
+
         setSnackbar({
           open: true,
           message: '채팅 내역이 저장되었습니다.',
@@ -203,11 +205,12 @@ const ChatPage = () => {
   };
 
   // 저장 없이 나가기
-  const handleConfirmExit = () => {
+  const handleConfirmExit = async () => {
     if (sessionId && isLoggedIn) {
         try {
             // skipSave를 true로 설정하여 저장하지 않고 세션 종료
-            endChat(sessionId, true);
+            await endChat(sessionId, true);
+            await getRecentProducts();
         } catch (error) {
             console.error("세션 종료 실패:", error);
         }
@@ -222,6 +225,7 @@ const ChatPage = () => {
         try {
             // skipSave를 true로 설정하여 저장하지 않고 세션 종료
             await endChat(sessionId, true);
+            await getRecentProducts();
         } catch (error) {
             console.error("세션 종료 실패:", error);
         }

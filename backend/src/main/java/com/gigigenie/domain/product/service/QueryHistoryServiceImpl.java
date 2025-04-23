@@ -61,6 +61,20 @@ public class QueryHistoryServiceImpl implements QueryHistoryService {
         historyRepository.deleteByMemberAndProduct(member, product);
     }
 
+    @Override
+    public List<Integer> recent(Integer memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        List<QueryHistory> histories = historyRepository.findByMember(member);
+        if (histories.isEmpty()) {
+            return List.of();
+        }
+
+        return histories.stream()
+                .map(history -> history.getProduct().getId())
+                .toList();
+    }
+
     private Member findMember(Integer memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));

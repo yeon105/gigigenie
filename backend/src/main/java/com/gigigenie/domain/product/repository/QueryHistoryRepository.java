@@ -12,4 +12,6 @@ public interface QueryHistoryRepository extends JpaRepository<QueryHistory, Inte
     List<QueryHistory> findByMemberAndProduct(@NotNull Member member, @NotNull Product product);
 
     void deleteByMemberAndProduct(@NotNull Member member, @NotNull Product product);
+
+    List<QueryHistory> findByMember(Member member);
 }

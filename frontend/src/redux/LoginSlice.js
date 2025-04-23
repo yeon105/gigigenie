@@ -9,6 +9,7 @@ const initialState = {
   user: null,
   accessToken: null,
   favoriteList: [],
+  recentList: [],
 };
 
 const loginSlice = createSlice({
@@ -32,6 +33,7 @@ const loginSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.message = action.payload.message;
       state.favoriteList = action.payload.favoriteList || [];
+      state.recentList = action.payload.recentList || [];
     },
     loginFailure: (state, action) => {
       state.loading = false;
@@ -43,6 +45,7 @@ const loginSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.favoriteList = [];
+      state.recentList = [];
     },
     clearError: (state) => {
       state.error = null;
@@ -50,6 +53,9 @@ const loginSlice = createSlice({
     },
     updateFavorites: (state, action) => {
       state.favoriteList = action.payload;
+    },
+    updateRecents: (state, action) => {
+      state.recentList = action.payload;
     },
     updateAccessToken: (state, action) => {
       state.accessToken = action.payload;
@@ -64,6 +70,7 @@ export const {
   logout, 
   clearError, 
   updateFavorites,
+  updateRecents,
   updateAccessToken 
 } = loginSlice.actions;
 
