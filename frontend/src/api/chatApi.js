@@ -1,5 +1,6 @@
 import axiosInstance from './axiosInstance';
 import store from '../redux/Store';
+import { updateRecents } from '../redux/LoginSlice';
 
 export const savePdf = async (name, categoryId, file, imageFile = null) => {
     try {
@@ -35,7 +36,7 @@ export const selectProduct = async (productId) => {
             productId: productId,
             top_k: 3,
             newSession: true,
-            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+            ...getMemberIdParam()
         };
         
         const response = await axiosInstance.post('/chat', body);
@@ -55,7 +56,7 @@ export const continueChat = async (query, productId, sessionId, top_k = 3) => {
             sessionId: sessionId,
             top_k: top_k,
             newSession: false,
-            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+            ...getMemberIdParam()
         };
         
         const response = await axiosInstance.post('/chat', body);
@@ -66,7 +67,7 @@ export const continueChat = async (query, productId, sessionId, top_k = 3) => {
     }
 };
   
-  // 3. 새 채팅 시작
+// 3. 새 채팅 시작
 export const createNewChat = async (query, productId, top_k = 3) => {
     try {
             const body = {
@@ -74,7 +75,7 @@ export const createNewChat = async (query, productId, top_k = 3) => {
             productId: productId,
             top_k: top_k,
             newSession: true,
-            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+            ...getMemberIdParam()
         };
         
         const response = await axiosInstance.post('/chat', body);
@@ -114,6 +115,32 @@ export const getHistories = async (productId) => {
         return response.data;
     } catch (error) {
         console.error("대화 내역 가져오기 실패:", error);
+        return [];
+    }
+};
+
+// 6. 최근 사용한 제품 목록 가져오기
+export const getRecentProducts = async () => {
+    try {
+        const { id: memberId } = store.getState().login || {};
+        
+        if (!memberId) {
+            return [];
+        }
+        
+        const response = await axiosInstance.get('/chat/history/recent', {
+            params: {
+                memberId: memberId
+            }
+        });
+        
+        console.log("최근 제품 목록 조회 결과:", response.data);
+        
+        store.dispatch(updateRecents(response.data));
+        
+        return response.data;
+    } catch (error) {
+        console.error("최근 사용 제품 목록 가져오기 실패:", error);
         return [];
     }
 };

@@ -3,6 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import ImageIcon from "@mui/icons-material/Image";
+import HistoryIcon from "@mui/icons-material/History";
 import {
   Box,
   Button,
@@ -22,11 +23,12 @@ import {
   Radio,
   FormControl,
   FormLabel,
+  Divider,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { savePdf } from "../api/chatApi";
+import { savePdf, getRecentProducts } from "../api/chatApi";
 import "../styles/SideLayout.css";
 import { addNotification, showToastMessage } from "../redux/NotificationSlice";
 
@@ -40,12 +42,35 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadImage, setUploadImage] = useState("no");
   const [selectedImage, setSelectedImage] = useState(null);
+  
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
+  const userRecents = useSelector((state) => state.login.recentList) || [];
   const products = useSelector((state) => state.product.products) || [];
+  const userId = useSelector((state) => state.login.user?.id);
 
   const favoriteProducts = products.filter(product => 
     userFavorites.includes(product.id)
   );
+
+  const recentProducts = products.filter(product => 
+    userRecents.includes(product.id)
+  );
+
+  // 컴포넌트 마운트 및 userId 변경 시 최근 항목 로드
+  useEffect(() => {
+    const loadRecentProducts = async () => {
+      if (userId) {
+        try {
+          await getRecentProducts();
+          console.log("최근 제품 목록 로드 완료");
+        } catch (error) {
+          console.error("최근 항목 가져오기 실패:", error);
+        }
+      }
+    };
+    
+    loadRecentProducts();
+  }, [userId]);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -166,16 +191,49 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         </Typography>
 
         <List className="device-list">
-          {favoriteProducts.map((product) => (
-            <ListItem
-              key={product.id}
-              className="device-item"
-              onClick={() => handleDeviceClick(product)}
-            >
-              <ListItemText primary={product.name} />
+          {favoriteProducts.length > 0 ? (
+            favoriteProducts.map((product) => (
+              <ListItem
+                key={product.id}
+                className="device-item"
+                onClick={() => handleDeviceClick(product)}
+              >
+                <ListItemText primary={product.name} />
+              </ListItem>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText primary="즐겨찾기한 디바이스가 없습니다." />
             </ListItem>
-          ))}
+          )}
         </List>
+
+        {/* 최근 항목 섹션 */}
+        {recentProducts.length > 0 && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Typography
+              variant="subtitle1"
+              className="sidebar-title"
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              <HistoryIcon fontSize="small" sx={{ mr: 1 }} />
+              최근 항목
+            </Typography>
+
+            <List className="device-list">
+              {recentProducts.map((product) => (
+                <ListItem
+                  key={product.id}
+                  className="device-item"
+                  onClick={() => handleDeviceClick(product)}
+                >
+                  <ListItemText primary={product.name} />
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
       </Box>
 
       <Box className="bottom-actions">

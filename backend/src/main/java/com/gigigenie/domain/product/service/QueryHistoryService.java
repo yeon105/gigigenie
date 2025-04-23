@@ -13,6 +13,8 @@ public interface QueryHistoryService {
 
     void deleteByMemberAndProduct(Integer memberId, Integer productId);
 
+    List<Integer> recent(Integer memberId);
+
     default QueryHistoryDTO entityToDTO(QueryHistory queryHistory) {
         return QueryHistoryDTO.builder()
                 .id(queryHistory.getId())
