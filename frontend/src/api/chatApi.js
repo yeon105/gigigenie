@@ -21,57 +21,99 @@ export const savePdf = async (name, categoryId, file, imageFile = null) => {
     }
 };
 
-export const createAnswer = async (query, productId, top_k) => {
+// 로그인 상태에 따라 memberId 추가 여부 결정하는 함수
+const getMemberIdParam = () => {
+    const state = store.getState();
+    return state.login?.id ? { memberId: state.login.id } : {};
+};
+  
+// 1. 제품 선택 시 호출
+export const selectProduct = async (productId) => {
     try {
         const body = {
-            "query": query,
-            "productId": productId,
-            "top_k": top_k
-          }
-
-        const response = await axiosInstance.post('/chat/ask', body);
+            query: "initial_connection",
+            productId: productId,
+            top_k: 3,
+            newSession: true,
+            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+        };
+        
+        const response = await axiosInstance.post('/chat', body);
         return response.data;
     } catch (error) {
-        console.error("답변 생성 실패:", error);
+        console.error("제품 선택 실패:", error);
+        throw error;
+    }
+};
+  
+// 2. 대화 계속하기
+export const continueChat = async (query, productId, sessionId, top_k = 3) => {
+    try {
+        const body = {
+            query: query,
+            productId: productId,
+            sessionId: sessionId,
+            top_k: top_k,
+            newSession: false,
+            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+        };
+        
+        const response = await axiosInstance.post('/chat', body);
+        return response.data;
+    } catch (error) {
+        console.error("대화 계속 실패:", error);
+        throw error;
+    }
+};
+  
+  // 3. 새 채팅 시작
+export const createNewChat = async (query, productId, top_k = 3) => {
+    try {
+            const body = {
+            query: query,
+            productId: productId,
+            top_k: top_k,
+            newSession: true,
+            ...getMemberIdParam()  // 로그인 상태에 따라 memberId 추가
+        };
+        
+        const response = await axiosInstance.post('/chat', body);
+        return response.data;
+    } catch (error) {
+        console.error("새 채팅 생성 실패:", error);
         throw error;
     }
 };
 
-export const saveChatHistory = async (messages, productId) => {
+// 4. 채팅방 나가기
+export const endChat = async (sessionId, skipSave = false) => {
     try {
-        const state = store.getState();
-        const memberId = state.login.id;
+        await axiosInstance.delete(`/chat/${sessionId}?skipSave=${skipSave}`);
+        return true;
+    } catch (error) {
+        console.error("세션 종료 실패:", error);
+        throw error;
+    }
+};
 
-        const chatHistory = [];
-        const filteredMessages = messages.slice(1);
+// 5. 이전 대화 내역 가져오기
+export const getHistories = async (productId) => {
+    try {
+        const { id: memberId } = store.getState().login || {};
         
-        for (let i = 0; i < filteredMessages.length; i += 2) {
-            if (i < filteredMessages.length && filteredMessages[i].role === 'user') {
-                const queryText = filteredMessages[i].text;
-                let responseText = "";
-                let queryTime = 0;
-                
-                if (i + 1 < filteredMessages.length && filteredMessages[i + 1].role === 'bot') {
-                    responseText = filteredMessages[i + 1].text;
-                    queryTime = filteredMessages[i + 1].queryTime || 0;
-                }
-                
-                chatHistory.push({
-                    queryText: queryText,
-                    responseText: responseText,
-                    queryTime: queryTime
-                });
-            }
+        if (!memberId) {
+            return [];
         }
-
-        const response = await axiosInstance.post('/chat/history/save', {
-            memberId: memberId,
-            productId: productId,
-            history: chatHistory
+        
+        const response = await axiosInstance.get('/chat/history', {
+            params: {
+                memberId: memberId,
+                productId: productId
+            }
         });
         return response.data;
     } catch (error) {
-        console.error("채팅 내역 저장 실패:", error);
-        throw error;
+        console.error("대화 내역 가져오기 실패:", error);
+        return [];
     }
 };

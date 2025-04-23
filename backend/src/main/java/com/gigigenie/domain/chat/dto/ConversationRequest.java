@@ -8,14 +8,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionRequestDTO {
+public class ConversationRequest {
     private String query;
 
     @JsonProperty("productId")
-    private String productId;
+    private Integer productId;
+
+    @JsonProperty("sessionId")
+    private String sessionId;
+
+    @JsonProperty("memberId")
+    private Integer memberId;
 
     @JsonProperty("top_k")
     private int top_k = 3;
+
+    private boolean newSession = false;
 }
-
-

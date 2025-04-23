@@ -40,8 +40,8 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (isLogin) fetchProducts();
-  }, [isLogin, fetchProducts]);
+    fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
     function handleClickOutside(event) {
