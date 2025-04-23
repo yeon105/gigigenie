@@ -3,6 +3,7 @@ package com.gigigenie.domain.chat.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gigigenie.domain.chat.dto.SearchResultDTO;
+import com.gigigenie.domain.chat.model.ChatMessage;
 import com.gigigenie.domain.prompt.service.PromptService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +32,27 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
-    public Mono<String> generateAnswer(String query, List<SearchResultDTO> retrievedDocs) {
+    public Mono<String> generateAnswerWithHistory(String query, List<SearchResultDTO> retrievedDocs, List<ChatMessage> messageHistory) {
         String context = retrievedDocs.stream()
                 .map(SearchResultDTO::getContent)
                 .collect(Collectors.joining("\n\n"));
 
-        String promptTemplate = promptService.getPromptTemplate("gemini_answer");
-        String prompt = String.format(promptTemplate, query, context);
+        // 대화 이력 포맷팅
+        String conversationHistory = "";
+        if (messageHistory != null && !messageHistory.isEmpty()) {
+            conversationHistory = messageHistory.stream()
+                    .map(msg -> msg.getRole() + ": " + msg.getContent())
+                    .collect(Collectors.joining("\n\n"));
+        }
+
+        String prompt;
+        if (!conversationHistory.isEmpty()) {
+            String promptTemplate = promptService.getPromptTemplate("gemini_answer_with_history");
+            prompt = String.format(promptTemplate, conversationHistory, query, context);
+        } else {
+            String promptTemplate = promptService.getPromptTemplate("gemini_answer");
+            prompt = String.format(promptTemplate, query, context);
+        }
 
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();

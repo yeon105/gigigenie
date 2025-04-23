@@ -39,6 +39,7 @@ dependencies {
 
     // Jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -56,6 +57,10 @@ dependencies {
     // Postgres
     implementation 'org.postgresql:postgresql'
     implementation 'dev.langchain4j:langchain4j-pgvector:0.28.0'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'redis.clients:jedis'
 
     // aws s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'

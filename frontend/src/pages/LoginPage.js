@@ -104,14 +104,7 @@ const LoginPage = () => {
     }
   };
 
-  const handleGuestLogin = () => {
-    dispatch(loginSuccess({
-      id: null,
-      name: 'Guest',
-      role: ['GUEST'],
-      accessToken: null,
-      message: '게스트 로그인'
-    }));
+  const handleContinueWithoutLogin = () => {
     navigate("/");
   };
 
@@ -268,26 +261,22 @@ const LoginPage = () => {
             </Typography>
           </Box>
 
-          {isLogin && (
-            <>
-              <Box className="divider">
-                <Typography variant="body2" className="divider-text">
-                  또는
-                </Typography>
-              </Box>
-              
-              <Box className="guest-button-container">
-                <Button
-                  fullWidth
-                  variant="contained"
-                  className="guest-button"
-                  onClick={handleGuestLogin}
-                >
-                  게스트로 계속하기
-                </Button>
-              </Box>
-            </>
-          )}
+          <Box className="divider">
+            <Typography variant="body2" className="divider-text">
+              또는
+            </Typography>
+          </Box>
+          
+          <Box className="guest-button-container">
+            <Button
+              fullWidth
+              variant="contained"
+              className="guest-button"
+              onClick={handleContinueWithoutLogin}
+            >
+              로그아웃 유지
+            </Button>
+          </Box>
 
           <Typography variant="caption" className="terms-text">
             {isLogin

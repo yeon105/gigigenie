@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class PdfService {
 

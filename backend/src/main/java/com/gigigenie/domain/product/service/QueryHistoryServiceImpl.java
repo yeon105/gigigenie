@@ -3,6 +3,7 @@ package com.gigigenie.domain.product.service;
 import com.gigigenie.domain.member.entity.Member;
 import com.gigigenie.domain.member.repository.MemberRepository;
 import com.gigigenie.domain.product.dto.HistoryRequest;
+import com.gigigenie.domain.product.dto.QueryHistoryDTO;
 import com.gigigenie.domain.product.entity.Product;
 import com.gigigenie.domain.product.entity.QueryHistory;
 import com.gigigenie.domain.product.repository.ProductRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,11 +26,8 @@ public class QueryHistoryServiceImpl implements QueryHistoryService {
 
     @Override
     public void save(HistoryRequest request) {
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+        Member member = findMember(request.getMemberId());
+        Product product = findProduct(request.getProductId());
 
         List<QueryHistory> histories = new ArrayList<>();
 
@@ -45,5 +44,30 @@ public class QueryHistoryServiceImpl implements QueryHistoryService {
         });
 
         historyRepository.saveAll(histories);
+    }
+
+    @Override
+    public List<QueryHistoryDTO> getHistories(Integer memberId, Integer productId) {
+        Member member = findMember(memberId);
+        Product product = findProduct(productId);
+        List<QueryHistory> histories = historyRepository.findByMemberAndProduct(member, product);
+        return histories.stream().map(this::entityToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByMemberAndProduct(Integer memberId, Integer productId) {
+        Member member = findMember(memberId);
+        Product product = findProduct(productId);
+        historyRepository.deleteByMemberAndProduct(member, product);
+    }
+
+    private Member findMember(Integer memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+
+    private Product findProduct(Integer productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 }
