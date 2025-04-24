@@ -1,15 +1,20 @@
 package com.gigigenie.config;
 
+import com.gigigenie.security.filter.JWTCheckFilter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -20,8 +25,10 @@ import java.util.List;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+    private final JWTCheckFilter jwtCheckFilter;
 
     @Value("${cors.allowed-origins}")
     private String allowedOriginsString;
@@ -34,34 +41,49 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> {
                     httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
                 })
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
-                                // Static resources and documentation that were previously in webSecurityCustomizer
-                                .requestMatchers(
-                                        new AntPathRequestMatcher("/favicon.ico"),
-                                        new AntPathRequestMatcher("/v2/api-docs"),
-                                        new AntPathRequestMatcher("/swagger-resources/**"),
-                                        new AntPathRequestMatcher("/swagger-ui/**"),
-                                        new AntPathRequestMatcher("/webjars/**"),
-                                        new AntPathRequestMatcher("/v3/api-docs/**"),
-                                        new AntPathRequestMatcher("/h2-console/**")
-                                ).permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/member/**")).permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/product/**")).permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/test/**")).permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/chat/ask")).hasRole("USER")
-//                        .requestMatchers(new AntPathRequestMatcher("/api/pdf/upload")).hasRole("USER")
-//                        .requestMatchers(new AntPathRequestMatcher("/api/favorite/**")).hasRole("USER")
-                                .anyRequest().authenticated()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/favicon.ico"),
+                                new AntPathRequestMatcher("/v2/api-docs"),
+                                new AntPathRequestMatcher("/swagger-resources/**"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),
+                                new AntPathRequestMatcher("/webjars/**"),
+                                new AntPathRequestMatcher("/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/h2-console/**")
+                        ).permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/api/member/login"),
+                                new AntPathRequestMatcher("/api/member/join"),
+                                new AntPathRequestMatcher("/api/member/check-email"),
+                                new AntPathRequestMatcher("/api/member/me"),
+                                new AntPathRequestMatcher("/api/product/search"),
+                                new AntPathRequestMatcher("/api/product/list"),
+                                new AntPathRequestMatcher("/api/chat/**")
+                        ).permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/api/member/logout"),
+                                new AntPathRequestMatcher("/api/member/refresh"),
+                                new AntPathRequestMatcher("/api/pdf/upload"),
+                                new AntPathRequestMatcher("/api/favorite/**"),
+                                new AntPathRequestMatcher("/api/history/**")
+                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/api/prompts/**")
+                        ).hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
 
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.addFilterBefore(jwtCheckFilter,
+                UsernamePasswordAuthenticationFilter.class);
+
+        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
         return http.build();
     }
