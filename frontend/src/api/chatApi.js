@@ -106,7 +106,7 @@ export const getHistories = async (productId) => {
             return [];
         }
         
-        const response = await axiosInstance.get('/chat/history', {
+        const response = await axiosInstance.get('/history', {
             params: {
                 memberId: memberId,
                 productId: productId
@@ -128,7 +128,7 @@ export const getRecentProducts = async () => {
             return [];
         }
         
-        const response = await axiosInstance.get('/chat/history/recent', {
+        const response = await axiosInstance.get('/history/recent', {
             params: {
                 memberId: memberId
             }

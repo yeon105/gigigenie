@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/chat/history")
+@RequestMapping("/api/history")
 @RestController
 public class QueryHistoryController {
     private final QueryHistoryService historyService;
