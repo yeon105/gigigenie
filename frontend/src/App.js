@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { productList } from "./api/productApi";
+import axios from "axios";
+import { API_SERVER_HOST } from "./config/ApiConfig";
 import "./App.css";
 import ChatPage from "./pages/ChatPage";
 import DevicePage from "./pages/DevicePage";
@@ -11,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import SideLayout from "./pages/SideLayout";
 import ToastNotification from "./components/ToastNotification";
 import { setProducts } from "./redux/ProductSlice";
+import { loginSuccess } from "./redux/LoginSlice";
 
 function App() {
   const location = useLocation();
@@ -39,9 +42,32 @@ function App() {
     }
   }, [dispatch]);
 
+  const checkLoginStatus = useCallback(async () => {
+    if (isLogin) return;
+    
+    try {
+      const response = await axios.get(`${API_SERVER_HOST}/api/member/me`, {
+        withCredentials: true
+      });
+      
+      if (response.data.isLoggedIn) {
+        dispatch(loginSuccess({
+          id: response.data.id,
+          name: response.data.name,
+          role: response.data.role,
+          favoriteList: response.data.favoriteList || [],
+          recentList: response.data.recentList || []
+        }));
+      }
+    } catch (error) {
+      console.error("로그인 상태 확인 중 오류:", error);
+    }
+  }, [isLogin, dispatch]);
+
   useEffect(() => {
+    checkLoginStatus();
     fetchProducts();
-  }, [fetchProducts]);
+  }, [checkLoginStatus, fetchProducts]);
 
   useEffect(() => {
     function handleClickOutside(event) {
