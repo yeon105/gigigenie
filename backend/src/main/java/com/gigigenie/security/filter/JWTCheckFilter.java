@@ -37,13 +37,13 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
 
         // SecurityConfig와 일치하는 경로 패턴 - permitAll() 설정된 경로들
-//        if (path.startsWith("/api/member/") ||
-//                path.startsWith("/api/product/") ||
-//                path.startsWith("/api/test/")) {
-//            return true;
-//        }
-
-        if (path.startsWith("/api/")) {
+        if (path.equals("/api/member/login") ||
+                path.equals("/api/member/join") ||
+                path.equals("/api/member/check-email") ||
+                path.equals("/api/member/me") ||
+                path.equals("/api/product/search") ||
+                path.equals("/api/product/list") ||
+                (path.startsWith("/api/chat"))) {
             return true;
         }
 
@@ -123,7 +123,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             printWriter.println(msg);
             printWriter.close();
         }
-
-
     }
+
 }
