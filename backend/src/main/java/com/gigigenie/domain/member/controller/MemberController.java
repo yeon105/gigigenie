@@ -65,7 +65,9 @@ public class MemberController {
 
         String refreshToken = loginClaims.get("refreshToken").toString();
         String accessToken = loginClaims.get("accessToken").toString();
-        CookieUtil.setTokenCookie(response, "refreshToken", refreshToken, jwtProps.getRefreshTokenExpirationPeriod()); // 1day
+
+        CookieUtil.setTokenCookie(response, "refreshToken", refreshToken, jwtProps.getRefreshTokenExpirationPeriod());
+        CookieUtil.setTokenCookie(response, "accessToken", accessToken, jwtProps.getAccessTokenExpirationPeriod());
 
         LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
                 .id(loginClaims.get("id").toString())
@@ -75,7 +77,7 @@ public class MemberController {
                 .build();
 
         log.info("loginResponseDTO: {}", loginResponseDTO);
-        // 로그인 성공시, accessToken, email, name, roles 반환
+        // 로그인 성공시, id, name, role 반환
         return ResponseEntity.ok(loginResponseDTO);
     }
 
@@ -83,11 +85,45 @@ public class MemberController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         log.info("logout");
-        // accessToken은 react 내 redux 상태 지워서 없앰
-        // 쿠키 삭제
+
         CookieUtil.removeTokenCookie(response, "refreshToken");
+        CookieUtil.removeTokenCookie(response, "accessToken");
 
         return ResponseEntity.ok("logout success!");
+    }
+
+    @Operation(summary = "현재 로그인 사용자 정보 조회")
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(
+            @CookieValue(value = "accessToken", required = false) String accessToken) {
+
+        log.info("getCurrentUser 호출, accessToken 존재: {}", accessToken != null);
+
+        if (accessToken == null) {
+            return ResponseEntity.ok().body(Map.of("isLoggedIn", false));
+        }
+
+        try {
+            Map<String, Object> claims = jwtUtil.validateToken(accessToken);
+
+            Integer id = (Integer) claims.get("id");
+            String email = (String) claims.get("email");
+            String name = (String) claims.get("name");
+            String role = (String) claims.get("role");
+
+            Map<String, Object> userInfo = Map.of(
+                    "id", id.toString(),
+                    "email", email,
+                    "name", name,
+                    "role", role,
+                    "isLoggedIn", true
+            );
+
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            log.warn("토큰 검증 실패: {}", e.getMessage());
+            return ResponseEntity.ok().body(Map.of("isLoggedIn", false));
+        }
     }
 
     /**
@@ -134,9 +170,10 @@ public class MemberController {
             refreshToUse = jwtUtil.generateToken(claims, jwtProps.getRefreshTokenExpirationPeriod());
         }
 
+        CookieUtil.setTokenCookie(response, "accessToken", newAccessToken, jwtProps.getAccessTokenExpirationPeriod());
         CookieUtil.setTokenCookie(response, "refreshToken", refreshToUse, jwtProps.getRefreshTokenExpirationPeriod());
 
-        return Map.of("newAccessToken", newAccessToken);
+        return Map.of("success", true);
     }
 
 }

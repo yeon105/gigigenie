@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import logo from "../images/manulo_logo.png";
 import { loginStart, loginSuccess, loginFailure, clearError } from "../redux/LoginSlice";
 import { loginPost, joinPost, checkEmailDuplicate } from "../api/loginApi";
+import { favoriteList } from "../api/favoriteApi";
+import { getRecentProducts } from "../api/chatApi";
 import "../styles/LoginPage.css";
 
 const LoginPage = () => {
@@ -88,16 +90,18 @@ const LoginPage = () => {
     try {
       dispatch(loginStart());
       const response = await loginPost(email, password);
-
+      const favorites = await favoriteList(response.id);
+      const recents = await getRecentProducts();
+      
       dispatch(loginSuccess({
         id: response.id,
         name: response.name,
         role: response.role,
-        accessToken: response.accessToken,
-        favoriteList: response.favoriteList || [],
+        favoriteList: favorites,
+        recentList: recents,
         message: "로그인에 성공했습니다."
       }));
-
+      
       navigate("/");
     } catch (error) {
       dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
@@ -129,8 +133,7 @@ const LoginPage = () => {
       
       if (response && response.success) {
         dispatch(loginSuccess({ 
-          message: "회원가입이 완료되었습니다. 로그인 해주세요.",
-          accessToken: null, 
+          message: "회원가입이 완료되었습니다. 로그인 해주세요."
         }));
         setIsLogin(true);
       } else {

@@ -6,6 +6,7 @@ import com.gigigenie.security.MemberDTO;
 import com.gigigenie.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 path.equals("/api/member/join") ||
                 path.equals("/api/member/check-email") ||
                 path.equals("/api/member/me") ||
+                path.equals("/api/member/refresh") ||
                 path.equals("/api/product/search") ||
                 path.equals("/api/product/list") ||
                 (path.startsWith("/api/chat"))) {
@@ -71,19 +73,28 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("------------------JWTCheckFilter 시작------------------");
         log.info("요청 경로: {}", request.getServletPath());
 
-        String autHeaderStr = request.getHeader("Authorization");
-        log.info("Authorization 헤더: {}", autHeaderStr);
+        Cookie[] cookies = request.getCookies();
+        String accessToken = null;
 
-        if (autHeaderStr == null) {
-            log.info("Authorization 헤더 없음, 필터 통과");
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        log.info("쿠키에서 추출된 accessToken: {}", accessToken != null ?
+                (accessToken.length() > 20 ? accessToken.substring(0, 20) + "..." : accessToken) : "없음");
+
+        if (accessToken == null) {
+            log.info("AccessToken 없음, 필터 통과");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String accessToken = autHeaderStr.substring(7).trim();
-            log.info("추출된 토큰: {}", accessToken.substring(0, 20) + "...");
-
             Map<String, Object> claims = jwtUtil.validateToken(accessToken);
             log.info("JWT claims: {}", claims);
 

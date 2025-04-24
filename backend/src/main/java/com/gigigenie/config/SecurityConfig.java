@@ -60,13 +60,13 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/member/join"),
                                 new AntPathRequestMatcher("/api/member/check-email"),
                                 new AntPathRequestMatcher("/api/member/me"),
+                                new AntPathRequestMatcher("/api/member/refresh"),
                                 new AntPathRequestMatcher("/api/product/search"),
                                 new AntPathRequestMatcher("/api/product/list"),
                                 new AntPathRequestMatcher("/api/chat/**")
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/member/logout"),
-                                new AntPathRequestMatcher("/api/member/refresh"),
                                 new AntPathRequestMatcher("/api/pdf/upload"),
                                 new AntPathRequestMatcher("/api/favorite/**"),
                                 new AntPathRequestMatcher("/api/history/**")
