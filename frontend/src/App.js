@@ -14,6 +14,7 @@ import SideLayout from "./pages/SideLayout";
 import ToastNotification from "./components/ToastNotification";
 import { setProducts } from "./redux/ProductSlice";
 import { loginSuccess } from "./redux/LoginSlice";
+import OAuth2Callback from "./components/OAuth2Callback";
 
 function App() {
   const location = useLocation();
@@ -119,6 +120,7 @@ function App() {
             <Route path="/" element={<DevicePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/oauth2-callback" element={<OAuth2Callback />} />
           </Routes>
         </Box>
 

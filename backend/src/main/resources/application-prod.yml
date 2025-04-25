@@ -16,6 +16,18 @@ spring:
       port: ${REDIS_PORT}
       timeout: 10000
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URL}
+            scope:
+              - email
+              - profile
+
 app:
   props:
     jwt:
@@ -38,3 +50,7 @@ org:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+frontend:
+  redirect:
+    url: ${FRONTEND_REDIRECT_URL}

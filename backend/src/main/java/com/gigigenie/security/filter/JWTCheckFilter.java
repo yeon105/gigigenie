@@ -1,8 +1,8 @@
 package com.gigigenie.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gigigenie.domain.member.dto.MemberDTO;
 import com.gigigenie.domain.member.enums.MemberRole;
-import com.gigigenie.security.MemberDTO;
 import com.gigigenie.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -43,6 +43,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 path.equals("/api/member/check-email") ||
                 path.equals("/api/member/me") ||
                 path.equals("/api/member/refresh") ||
+                path.equals("/api/oauth2/") ||
+                path.equals("/oauth2/") ||
+                path.equals("/login/oauth2/code/") ||
                 path.equals("/api/product/search") ||
                 path.equals("/api/product/list") ||
                 (path.startsWith("/api/chat"))) {
@@ -104,6 +107,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String name = (String) claims.get("name");
             String role = (String) claims.get("role");
             log.info("추출된 role: {}", role);
+
+            if (password == null || password.isEmpty()) {
+                password = "oauth2UserDummyPassword";
+                log.info("OAuth2 사용자를 위한 더미 비밀번호 설정");
+            }
 
             MemberRole memberRole = MemberRole.valueOf(role);
             MemberDTO memberDTO = new MemberDTO(id, email, password, name, memberRole);
