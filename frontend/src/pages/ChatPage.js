@@ -158,7 +158,7 @@ const ChatPage = () => {
       console.error("답변 생성 실패:", error);
       setMessages(prev => [
         ...prev.slice(0, -1),
-        { role: "bot", text: "죄송합니다. 답변을 생성하는 중에 문제가 발생했습니다.", queryTime: 0 }
+        { role: "bot", text: "답변을 생성하는 중에 문제가 발생했습니다.", queryTime: 0 }
       ]);
     } finally {
       setIsLoading(false);
@@ -322,11 +322,28 @@ const ChatPage = () => {
         autoHideDuration={1500} 
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          '& .MuiPaper-root': {
+            width: 'auto',
+            minWidth: 'auto',
+            maxWidth: '90%'
+          }
+        }}
       >
         <Alert 
           onClose={() => setSnackbar({ ...snackbar, open: false })} 
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ 
+            backgroundColor: '#4AD395',
+            color: '#ffffff',
+            '& .MuiAlert-icon': { color: '#ffffff' },
+            width: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '6px 16px'
+          }}
+          className="toast-notification"
         >
           {snackbar.message}
         </Alert>

@@ -7,6 +7,7 @@ import com.gigigenie.domain.chat.repository.LangchainCollectionRepository;
 import com.gigigenie.domain.chat.repository.LangchainEmbeddingRepository;
 import com.gigigenie.domain.chat.util.PdfTextExtractor;
 import com.gigigenie.domain.chat.util.TextSplitter;
+import com.gigigenie.domain.notification.service.NotificationService;
 import com.gigigenie.domain.product.entity.Category;
 import com.gigigenie.domain.product.entity.Product;
 import com.gigigenie.domain.product.repository.CategoryRepository;
@@ -38,9 +39,11 @@ public class PdfService {
     private final LangchainCollectionRepository collectionRepository;
     private final LangchainEmbeddingRepository embeddingRepository;
     private final CustomFileUtil fileUtil;
+    private final NotificationService notificationService;
 
     @Transactional
-    public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize, int chunkOverlap, String name, MultipartFile image) {
+    public Map<String, Object> processPdf(MultipartFile file, Integer categoryId, int chunkSize,
+                                          int chunkOverlap, String name, MultipartFile image, Integer memberId) {
         Optional<Product> existingProduct = productRepository.findByModelName(name);
         if (existingProduct.isPresent()) {
             return Map.of(
@@ -81,6 +84,14 @@ public class PdfService {
                 .build();
 
         productRepository.save(product);
+
+        if (memberId != null) {
+            notificationService.addNotification(
+                    memberId,
+                    name + " 제품이 성공적으로 등록되었습니다.",
+                    "제품 등록 완료"
+            );
+        }
 
         List<String> chunks = TextSplitter.split(text, chunkSize, chunkOverlap);
 

@@ -1,6 +1,7 @@
 import axiosInstance from './axiosInstance';
 import store from '../redux/Store';
 import { updateRecents } from '../redux/LoginSlice';
+import { showToastMessage } from '../redux/NotificationSlice';
 
 export const savePdf = async (name, categoryId, file, imageFile = null) => {
     try {
@@ -9,12 +10,27 @@ export const savePdf = async (name, categoryId, file, imageFile = null) => {
         formData.append('categoryId', categoryId);
         formData.append('file', file);
         formData.append('image', imageFile || null);
+        
+        const { id: memberId } = store.getState().login || {};
+        if (memberId) {
+            formData.append('memberId', memberId);
+        } else {
+            console.error("로그인된 사용자 정보가 없습니다.");
+            throw new Error("로그인이 필요합니다.");
+        }
 
         const response = await axiosInstance.post('/pdf/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
+        
+        if (response.data.status === "success") {
+            if (memberId) {
+                store.dispatch(showToastMessage(`${name} 제품이 성공적으로 등록되었습니다.`));
+            }
+        }
+        
         return response.data;
     } catch (error) {
         console.error("PDF 저장 실패:", error);

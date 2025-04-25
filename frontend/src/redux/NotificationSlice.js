@@ -10,29 +10,21 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState,
   reducers: {
+    setNotifications: (state, action) => {
+      state.notifications = action.payload;
+    },
     addNotification: (state, action) => {
       state.notifications.unshift({
-        id: Date.now(),
+        id: action.payload.id || Date.now(),
         message: action.payload.message,
         title: action.payload.title || '',
-        time: new Date().toLocaleTimeString(),
-        read: false,
-        fontSize: action.payload.fontSize || 'normal'
+        time: action.payload.time || new Date().toLocaleTimeString(),
       });
     },
     removeNotification: (state, action) => {
       state.notifications = state.notifications.filter(
         (notification) => notification.id !== action.payload
       );
-    },
-    clearAllNotifications: (state) => {
-      state.notifications = [];
-    },
-    markAllAsRead: (state) => {
-      state.notifications = state.notifications.map(notification => ({
-        ...notification,
-        read: true
-      }));
     },
     showToastMessage: (state, action) => {
       state.toastMessage = action.payload;
@@ -45,10 +37,9 @@ const notificationSlice = createSlice({
 });
 
 export const { 
+  setNotifications,
   addNotification, 
-  removeNotification, 
-  clearAllNotifications,
-  markAllAsRead,
+  removeNotification,
   showToastMessage,
   hideToastMessage
 } = notificationSlice.actions;

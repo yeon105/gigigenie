@@ -19,6 +19,27 @@ const NotificationComponent = ({
   notifications, 
   onClearNotification 
 }) => {
+  const formatTime = (timeString) => {
+    if (/^\d{2}:\d{2}:\d{2}$/.test(timeString)) {
+      return timeString;
+    }
+    
+    try {
+      const date = new Date(timeString);
+      if (isNaN(date.getTime())) {
+        return timeString;
+      }
+      return date.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    } catch (e) {
+      return timeString;
+    }
+  };
+
   if (notifications.length === 0) {
     return (
       <Popover
@@ -77,7 +98,7 @@ const NotificationComponent = ({
             <ListItemText
               primary={
                 <Typography
-                  variant={notification.fontSize === 'small' ? 'body2' : 'body1'}
+                  variant="body1"
                   sx={{ fontWeight: 500 }}
                 >
                   {notification.title ? `${notification.title}: ${notification.message}` : notification.message}
@@ -90,7 +111,7 @@ const NotificationComponent = ({
                   display="block"
                   className="notification-time"
                 >
-                  {notification.time}
+                  {formatTime(notification.time)}
                 </Typography>
               }
             />

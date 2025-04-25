@@ -56,7 +56,6 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     userRecents.includes(product.id)
   );
 
-  // 컴포넌트 마운트 및 userId 변경 시 최근 항목 로드
   useEffect(() => {
     const loadRecentProducts = async () => {
       if (userId) {
@@ -92,7 +91,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      alert("PDF 파일만 업로드 가능합니다.");
+      dispatch(showToastMessage("PDF 파일만 업로드 가능합니다."));
     }
   };
 
@@ -103,7 +102,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
       if (validImageTypes.includes(file.type)) {
         setSelectedImage(file);
       } else {
-        alert("JPG, JPEG, PNG, WEBP 형식의 이미지만 업로드 가능합니다.");
+        dispatch(showToastMessage("JPG, JPEG, PNG, WEBP 형식의 이미지만 업로드 가능합니다."));
         setSelectedImage(null);
       }
     }
@@ -111,25 +110,25 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
 
   const handleSubmit = async () => {
     if (!selectedFile) {
-      alert("PDF 파일을 선택해주세요.");
+      dispatch(showToastMessage("PDF 파일을 선택해주세요."));
       return;
     }
 
     if (!deviceName.trim()) {
-      alert("제품명을 입력해주세요.");
+      dispatch(showToastMessage("제품명을 입력해주세요."));
       return;
     }
 
     if (!categoryId) {
-      alert("카테고리를 선택해주세요.");
+      dispatch(showToastMessage("카테고리를 선택해주세요."));
       return;
     }
 
     if (uploadImage === "yes" && !selectedImage) {
-      alert("이미지를 선택해주세요.");
+      dispatch(showToastMessage("이미지를 선택해주세요."));
       return;
     }
-
+    
     setIsUploading(true);
     setOpenModal(false);
 
@@ -142,8 +141,9 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
       );
       
       if (response.status === "exists") {
-        alert(`${response.model_name}은(는) 이미 등록된 모델입니다.`);
+        dispatch(showToastMessage(`${response.model_name}은(는) 이미 등록된 모델입니다.`));
       } else {
+        dispatch(showToastMessage("등록 완료 시 알림으로 안내됩니다."));
         await new Promise(resolve => setTimeout(resolve, 500));
         await onProductUpdate();
         
@@ -154,7 +154,7 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
         }));
       }
     } catch (error) {
-      alert("제품 설명서 등록에 실패했습니다.");
+      dispatch(showToastMessage("제품 설명서 등록에 실패했습니다."));
       console.error("등록 실패:", error);
     } finally {
       setTimeout(() => {
