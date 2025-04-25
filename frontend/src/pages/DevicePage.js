@@ -9,6 +9,7 @@ import { productList, searchProducts } from "../api/productApi";
 import { addFavorite, deleteFavorite, favoriteList } from "../api/favoriteApi";
 import { setProducts } from "../redux/ProductSlice";
 import { updateFavorites } from "../redux/LoginSlice";
+import { showToastMessage } from "../redux/NotificationSlice";
 import "../styles/DevicePage.css";
 
 const DevicePage = () => {
@@ -65,7 +66,7 @@ const DevicePage = () => {
     e.stopPropagation();
 
     if (!userId) {
-      alert("로그인이 필요합니다.");
+      dispatch(showToastMessage("로그인이 필요합니다."));
       return;
     }
 
@@ -85,7 +86,7 @@ const DevicePage = () => {
       dispatch(updateFavorites(newFavorites));
     } catch (error) {
       console.error("즐겨찾기 토글 실패:", error);
-      alert("즐겨찾기 처리 중 오류가 발생했습니다.");
+      dispatch(showToastMessage("즐겨찾기 처리 중 오류가 발생했습니다."));
       await fetchFavorites();
     } finally {
       setIsProcessing(false);
@@ -101,6 +102,7 @@ const DevicePage = () => {
         }
       } catch (error) {
         console.error("검색 실패:", error);
+        dispatch(showToastMessage("검색 중 오류가 발생했습니다."));
       }
     }
   };

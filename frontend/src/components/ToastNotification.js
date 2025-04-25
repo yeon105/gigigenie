@@ -28,15 +28,27 @@ const ToastNotification = () => {
       autoHideDuration={5000}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      sx={{
+        '& .MuiPaper-root': {
+          width: 'auto',
+          minWidth: 'auto',
+          maxWidth: '90%'
+        }
+      }}
     >
       <Alert 
         onClose={handleClose} 
         severity="success" 
         variant="filled"
         sx={{ 
-          width: '100%',
-          backgroundColor: '#00c471',
-          '& .MuiAlert-icon': { color: '#ffffff' }
+          backgroundColor: '#4AD395',
+          color: '#ffffff',
+          '& .MuiAlert-icon': { color: '#ffffff' },
+          width: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '6px 16px'
         }}
         className="toast-notification"
       >

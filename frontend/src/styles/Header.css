@@ -12,6 +12,11 @@
     cursor: pointer;
 }
 
+.header-logo.disabled-logo {
+    cursor: default;
+    opacity: 0.9;
+}
+
 .menu-button.MuiIconButton-root svg {
     color: #00c471;
 }

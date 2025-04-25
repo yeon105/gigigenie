@@ -15,6 +15,7 @@ import ToastNotification from "./components/ToastNotification";
 import { setProducts } from "./redux/ProductSlice";
 import { loginSuccess } from "./redux/LoginSlice";
 import OAuth2Callback from "./components/OAuth2Callback";
+import { fetchNotifications } from "./api/notificationApi";
 
 function App() {
   const location = useLocation();
@@ -69,6 +70,12 @@ function App() {
     checkLoginStatus();
     fetchProducts();
   }, [checkLoginStatus, fetchProducts]);
+
+  useEffect(() => {
+    if (isLogin && user && user.id) {
+      fetchNotifications();
+    }
+  }, [isLogin, user]);
 
   useEffect(() => {
     function handleClickOutside(event) {

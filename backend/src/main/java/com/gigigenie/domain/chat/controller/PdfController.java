@@ -37,7 +37,9 @@ public class PdfController {
             @Parameter(description = "제품 이름", required = true)
             @RequestParam("name") String name,
             @Parameter(description = "업로드할 제품 이미지 (jpg, jpeg, png, webp 형식만 허용)")
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @Parameter(description = "업로드할 제품 이미지 (jpg, jpeg, png, webp 형식만 허용)", required = true)
+            @RequestParam(value = "memberId") Integer memberId
     ) {
         if (!Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf")) {
             return ResponseEntity.badRequest().body("PDF 파일만 지원합니다.");
@@ -65,7 +67,7 @@ public class PdfController {
             }
         }
 
-        var result = pdfService.processPdf(file, categoryId, chunkSize, chunkOverlap, name, image);
+        var result = pdfService.processPdf(file, categoryId, chunkSize, chunkOverlap, name, image, memberId);
         return ResponseEntity.ok(result);
     }
 }

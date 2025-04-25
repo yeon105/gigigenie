@@ -52,6 +52,14 @@ CREATE TABLE prompt_templates (
   active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
+CREATE TABLE notifications (
+  id SERIAL PRIMARY KEY,
+  member_id INTEGER NOT NULL,
+  message TEXT NOT NULL,
+  title VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
 -- 3. 그 다음 외래 키 제약 추가
 ALTER TABLE favorite
   ADD CONSTRAINT fk_favorite_product FOREIGN KEY (product_id) REFERENCES product(product_id),
@@ -64,7 +72,14 @@ ALTER TABLE query_history
 ALTER TABLE product
   ADD CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES category(category_id);
 
--- 4. category 데이터 삽입
+ALTER TABLE notifications
+    ADD CONSTRAINT fk_notification_member FOREIGN KEY (member_id) REFERENCES member(member_id);
+
+-- 4. 인덱스 추가 (조회 성능 향상)
+CREATE INDEX idx_notification_member_id ON notifications(member_id);
+CREATE INDEX idx_notification_created_at ON notifications(created_at);
+
+-- 5. category 데이터 삽입
 INSERT INTO public.category (category_name, category_icon)
 VALUES
     ('tv','https://cdn-icons-png.flaticon.com/128/10811/10811514.png'),
