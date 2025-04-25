@@ -21,6 +21,7 @@ const DevicePage = () => {
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const userId = useSelector((state) => state.login.user?.id);
   const [searchMode, setSearchMode] = useState('name');
+  const MIN_SEARCH_LENGTH = 7;
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -48,6 +49,12 @@ const DevicePage = () => {
     fetchProducts();
     fetchFavorites();
   }, [fetchProducts, fetchFavorites]);
+
+  useEffect(() => {
+    if (searchMode === 'name') {
+      fetchProducts();
+    }
+  }, [searchMode, fetchProducts]);
 
   const filteredDevices = products.filter((device) => {
     if (!device || !device.name) return false;
@@ -97,6 +104,10 @@ const DevicePage = () => {
     if (e.key === 'Enter') {
       try {
         if (searchMode === 'feature') {
+          if (searchQuery.trim().length < MIN_SEARCH_LENGTH) {
+            dispatch(showToastMessage(`검색어는 최소 ${MIN_SEARCH_LENGTH}자 이상이어야 합니다.`));
+            return;
+          }
           const searchResults = await searchProducts(searchQuery);
           dispatch(setProducts(searchResults));
         }
@@ -105,6 +116,12 @@ const DevicePage = () => {
         dispatch(showToastMessage("검색 중 오류가 발생했습니다."));
       }
     }
+  };
+
+  const handleSearchModeChange = (e) => {
+    const newMode = e.target.value;
+    setSearchMode(newMode);
+    setSearchQuery('');
   };
 
   return (
@@ -121,7 +138,7 @@ const DevicePage = () => {
           />
           <select 
             value={searchMode}
-            onChange={(e) => setSearchMode(e.target.value)}
+            onChange={handleSearchModeChange}
             className="search-select"
           >
             <option value="name">제품명 검색</option>
