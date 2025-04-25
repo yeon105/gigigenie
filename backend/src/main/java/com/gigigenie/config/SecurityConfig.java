@@ -1,5 +1,7 @@
 package com.gigigenie.config;
 
+import com.gigigenie.domain.oauth.model.CustomOAuth2User;
+import com.gigigenie.domain.oauth.service.OAuth2Service;
 import com.gigigenie.security.filter.JWTCheckFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -29,9 +33,13 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JWTCheckFilter jwtCheckFilter;
+    private final OAuth2Service oAuth2Service;
 
     @Value("${cors.allowed-origins}")
     private String allowedOriginsString;
+
+    @Value("${frontend.redirect.url}")
+    private String FRONTEND_URL;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,6 +69,9 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/member/check-email"),
                                 new AntPathRequestMatcher("/api/member/me"),
                                 new AntPathRequestMatcher("/api/member/refresh"),
+                                new AntPathRequestMatcher("/api/oauth2/**"),
+                                new AntPathRequestMatcher("/oauth2/**"),
+                                new AntPathRequestMatcher("/login/oauth2/code/**"),
                                 new AntPathRequestMatcher("/api/product/search"),
                                 new AntPathRequestMatcher("/api/product/list"),
                                 new AntPathRequestMatcher("/api/chat/**")
@@ -76,6 +87,42 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
+
+        http.oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(oAuth2Service)
+                )
+                .authorizationEndpoint(endpoint -> endpoint
+                        .baseUri("/oauth2/authorization")
+                )
+                .redirectionEndpoint(endpoint -> endpoint
+                        .baseUri("/login/oauth2/code/*")
+                )
+                .successHandler((request, response, authentication) -> {
+                    log.info("OAuth2 로그인 성공 - successHandler 호출");
+                    try {
+                        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+                        log.info("인증된 사용자: {}", oAuth2User.getEmail());
+
+                        Map<String, Object> tokens = oAuth2Service.generateTokens(oAuth2User, response);
+                        log.info("토큰 생성 완료, 프론트엔드로 리다이렉트: {}", FRONTEND_URL);
+
+                        String redirectUrl = FRONTEND_URL +
+                                "/oauth2-callback?id=" + oAuth2User.getMemberId() +
+                                "&name=" + java.net.URLEncoder.encode(oAuth2User.getName(), "UTF-8") +
+                                "&role=" + oAuth2User.getRole().name();
+
+                        response.sendRedirect(redirectUrl);
+                    } catch (Exception e) {
+                        log.error("OAuth2 성공 핸들러 처리 중 오류: ", e);
+                        try {
+                            response.sendRedirect(FRONTEND_URL + "/login?error=authentication-error");
+                        } catch (IOException ex) {
+                            log.error("리다이렉션 실패: ", ex);
+                        }
+                    }
+                })
+        );
 
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

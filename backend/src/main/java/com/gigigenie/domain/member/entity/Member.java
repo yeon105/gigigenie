@@ -22,7 +22,7 @@ public class Member {
     @Column(nullable = false, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -32,6 +32,21 @@ public class Member {
     @Column(name = "role")
     private MemberRole role;
 
+    private String provider;
+    private String providerId;
+
     @Column(name = "join_date", nullable = false)
-    private LocalDateTime joinDate;
+    @Builder.Default
+    private LocalDateTime joinDate = LocalDateTime.now();
+
+    public Member updateName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Member updateOAuth2Info(String provider, String providerId) {
+        this.provider = provider;
+        this.providerId = providerId;
+        return this;
+    }
 }

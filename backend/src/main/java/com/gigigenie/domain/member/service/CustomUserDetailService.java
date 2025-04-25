@@ -1,5 +1,6 @@
-package com.gigigenie.security;
+package com.gigigenie.domain.member.service;
 
+import com.gigigenie.domain.member.dto.MemberDTO;
 import com.gigigenie.domain.member.entity.Member;
 import com.gigigenie.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.gigigenie.security;
+package com.gigigenie.domain.member.dto;
 
 import com.gigigenie.domain.member.enums.MemberRole;
 import lombok.Getter;

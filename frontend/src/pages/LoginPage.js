@@ -7,6 +7,8 @@ import { loginStart, loginSuccess, loginFailure, clearError } from "../redux/Log
 import { loginPost, joinPost, checkEmailDuplicate } from "../api/loginApi";
 import { favoriteList } from "../api/favoriteApi";
 import { getRecentProducts } from "../api/chatApi";
+import GoogleIcon from '@mui/icons-material/Google';
+import { API_SERVER_HOST } from "../config/ApiConfig";
 import "../styles/LoginPage.css";
 
 const LoginPage = () => {
@@ -145,6 +147,10 @@ const LoginPage = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_SERVER_HOST}/oauth2/authorization/google`;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     isLogin ? handleLogin() : handleJoin();
@@ -183,6 +189,41 @@ const LoginPage = () => {
             <Alert severity="success" sx={{ mb: 2 }}>
               {message}
             </Alert>
+          )}
+
+          {isLogin && (
+            <Box className="guest-button-container">
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<GoogleIcon />}
+                onClick={handleGoogleLogin}
+                className="google-button"
+                sx={{
+                  mb: 2,
+                  color: '#757575',
+                  borderColor: '#DADCE0',
+                  '&:hover': {
+                    borderColor: '#DADCE0',
+                    backgroundColor: '#F2F2F2',
+                  },
+                  height: '48px',
+                  textTransform: 'none',
+                  fontSize: '16px',
+                  fontWeight: 500,
+                }}
+              >
+                Google로 계속하기
+              </Button>
+            </Box>
+          )}
+          
+          {isLogin && (
+            <Box className="divider">
+              <Typography variant="body2" className="divider-text">
+                또는
+              </Typography>
+            </Box>
           )}
 
           <form onSubmit={handleSubmit} className="login-form">
@@ -264,22 +305,26 @@ const LoginPage = () => {
             </Typography>
           </Box>
 
-          <Box className="divider">
-            <Typography variant="body2" className="divider-text">
-              또는
-            </Typography>
-          </Box>
-          
-          <Box className="guest-button-container">
-            <Button
-              fullWidth
-              variant="contained"
-              className="guest-button"
-              onClick={handleContinueWithoutLogin}
-            >
-              로그아웃 유지
-            </Button>
-          </Box>
+          {isLogin && (
+            <>
+              <Box className="divider">
+                <Typography variant="body2" className="divider-text">
+                  또는
+                </Typography>
+              </Box>
+              
+              <Box className="guest-button-container">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  className="guest-button"
+                  onClick={handleContinueWithoutLogin}
+                >
+                  로그아웃 유지
+                </Button>
+              </Box>
+            </>
+          )}
 
           <Typography variant="caption" className="terms-text">
             {isLogin
