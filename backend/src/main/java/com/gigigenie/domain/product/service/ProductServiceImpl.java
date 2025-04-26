@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
             String vectorString = convertToVectorString(queryEmbedding);
             log.info("Generated embedding for query: {} (vector size: {})", query, queryEmbedding.size());
 
-            float similarityThreshold = 0.5f;
+            float similarityThreshold = 0.4f;
             List<ProductResponse> products = productRepository.findSimilarProducts(vectorString, limit, similarityThreshold);
 
             if (products.isEmpty()) {
