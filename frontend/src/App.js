@@ -137,7 +137,7 @@ function App() {
             sx={{
               position: "fixed",
               top: "60px",
-              width: "250px",
+              width: "240px",
               height: "calc(100% - 60px)",
               transition: "right 0.3s ease",
               zIndex: 1300,
