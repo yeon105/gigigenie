@@ -16,6 +16,7 @@ import SendIcon from "@mui/icons-material/Send";
 import "../styles/ChatPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ReactMarkdown from 'react-markdown';
 import { selectProduct, continueChat, createNewChat, endChat, getHistories, getRecentProducts  } from '../api/chatApi';
 
 const ChatPage = () => {
@@ -365,18 +366,32 @@ const ChatPage = () => {
                 <Typography>답변 생성 중...</Typography>
               </Box>
             ) : (
-              msg.text.split("\n").map((line, i) => (
-                <Typography
-                  key={i}
-                  component={i === 0 ? "div" : "p"}
-                  sx={{
-                    margin: i === 0 ? 0 : "4px 0",
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {line}
-                </Typography>
-              ))
+              <ReactMarkdown
+                components={{
+                  h1: ({node, ...props}) => <Typography variant="h4" gutterBottom {...props} />,
+                  h2: ({node, ...props}) => <Typography variant="h5" gutterBottom {...props} />,
+                  h3: ({node, ...props}) => <Typography variant="h6" gutterBottom {...props} />,
+                  p: ({node, ...props}) => <Typography paragraph {...props} style={{margin: '8px 0'}} />,
+                  ul: ({node, ...props}) => <Box component="ul" sx={{pl: 2}} {...props} />,
+                  ol: ({node, ...props}) => <Box component="ol" sx={{pl: 2}} {...props} />,
+                  li: ({node, ...props}) => <Typography component="li" {...props} style={{margin: '4px 0'}} />,
+                  blockquote: ({node, ...props}) => (
+                    <Box
+                      sx={{
+                        borderLeft: '4px solid #ccc',
+                        paddingLeft: 2,
+                        margin: '10px 0',
+                        color: 'text.secondary',
+                        bgcolor: 'rgba(0,0,0,0.03)'
+                      }}
+                      {...props}
+                    />
+                  ),
+                  strong: ({node, ...props}) => <Typography component="span" fontWeight="bold" {...props} />
+                }}
+              >
+                {msg.text}
+              </ReactMarkdown>
             )}
           </Box>
         ))}
