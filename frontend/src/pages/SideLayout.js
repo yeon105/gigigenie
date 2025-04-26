@@ -46,7 +46,11 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const userRecents = useSelector((state) => state.login.recentList) || [];
   const products = useSelector((state) => state.product.products) || [];
+  const categories = useSelector((state) => state.product.categories) || [];
   const userId = useSelector((state) => state.login.user?.id);
+
+  const homeApplianceCategories = categories.filter(category => category.type === "가전제품");
+  const personalDeviceCategories = categories.filter(category => category.type === "개인용 전자기기");
 
   const favoriteProducts = products.filter(product => 
     userFavorites.includes(product.id)
@@ -326,23 +330,18 @@ const SideLayout = ({ onClose, onProductUpdate }) => {
             onChange={handleCategoryChange}
           >
             <ListSubheader>가전제품 (가정용 전자기기)</ListSubheader>
-            <MenuItem value="1">텔레비전 (TV)</MenuItem>
-            <MenuItem value="2">냉장고</MenuItem>
-            <MenuItem value="3">세탁기</MenuItem>
-            <MenuItem value="4">전자레인지</MenuItem>
-            <MenuItem value="5">에어컨</MenuItem>
-            <MenuItem value="6">청소기 (유선/무선)</MenuItem>
-            <MenuItem value="7">정수기</MenuItem>
-            <MenuItem value="8">커피머신</MenuItem>
-            <MenuItem value="9">전기밥솥</MenuItem>
+            {homeApplianceCategories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
             
             <ListSubheader>개인용 전자기기</ListSubheader>
-            <MenuItem value="10">스마트폰</MenuItem>
-            <MenuItem value="11">태블릿</MenuItem>
-            <MenuItem value="12">노트북</MenuItem>
-            <MenuItem value="13">스마트워치</MenuItem>
-            <MenuItem value="14">이어폰/헤드폰 (유선/무선)</MenuItem>
-            <MenuItem value="15">전자책 리더기</MenuItem>
+            {personalDeviceCategories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
           </TextField>
 
           <FormControl component="fieldset" sx={{ mb: 3 }}>

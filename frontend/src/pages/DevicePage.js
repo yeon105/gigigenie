@@ -2,7 +2,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Typography } from "@mui/material";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { productList, searchProducts } from "../api/productApi";
@@ -21,7 +21,11 @@ const DevicePage = () => {
   const userFavorites = useSelector((state) => state.login.favoriteList) || [];
   const userId = useSelector((state) => state.login.user?.id);
   const [searchMode, setSearchMode] = useState('name');
+  const [hasCategoryInQuery, setHasCategoryInQuery] = useState(false);
   const MIN_SEARCH_LENGTH = 7;
+  
+  const categoriesFromRedux = useSelector((state) => state.product.categories);
+  const categories = useMemo(() => categoriesFromRedux || [], [categoriesFromRedux]);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -55,6 +59,18 @@ const DevicePage = () => {
       fetchProducts();
     }
   }, [searchMode, fetchProducts]);
+
+  useEffect(() => {
+    if (searchMode === 'feature' && searchQuery) {
+      const queryLower = searchQuery.toLowerCase();
+      const categoryIncluded = categories.some(category => 
+        queryLower.includes(category.searchKeyword.toLowerCase())
+      );
+      setHasCategoryInQuery(categoryIncluded);
+    } else {
+      setHasCategoryInQuery(false);
+    }
+  }, [searchQuery, searchMode, categories]);
 
   const filteredDevices = products.filter((device) => {
     if (!device || !device.name) return false;
@@ -108,6 +124,12 @@ const DevicePage = () => {
             dispatch(showToastMessage(`검색어는 최소 ${MIN_SEARCH_LENGTH}자 이상이어야 합니다.`));
             return;
           }
+          
+          if (!hasCategoryInQuery) {
+            dispatch(showToastMessage("검색어에 제품 카테고리(TV, 세탁기 등)를 포함해주세요."));
+            return;
+          }
+          
           const searchResults = await searchProducts(searchQuery);
           dispatch(setProducts(searchResults));
         }
@@ -126,25 +148,41 @@ const DevicePage = () => {
 
   return (
     <Box className="device-page-container">
-      <Box className="search-bar">
-        <SearchIcon sx={{ color: "#777777" }} />
-        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-          <input
-            type="text"
-            placeholder={searchMode === 'name' ? "제품명으로 검색..." : "제품 특징으로 검색..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleSearch}
-          />
-          <select 
-            value={searchMode}
-            onChange={handleSearchModeChange}
-            className="search-select"
-          >
-            <option value="name">제품명 검색</option>
-            <option value="feature">특징 기반 검색</option>
-          </select>
+      <Box className="search-section">
+        <Box className="search-bar">
+          <SearchIcon sx={{ color: "#777777" }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <input
+              type="text"
+              placeholder={searchMode === 'name' 
+                ? "제품명으로 검색..." 
+                : "제품 특징으로 검색..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleSearch}
+              className={searchMode === 'feature' && searchQuery && !hasCategoryInQuery ? "missing-category" : ""}
+            />
+            <select 
+              value={searchMode}
+              onChange={handleSearchModeChange}
+              className="search-select"
+            >
+              <option value="name">제품명 검색</option>
+              <option value="feature">특징 기반 검색</option>
+            </select>
+          </Box>
         </Box>
+        
+        {searchMode === 'feature' && !searchQuery && (
+          <Box className="search-guide">
+            <Typography variant="body2" color="text.secondary">
+              <strong>카테고리</strong>와 찾는 <strong>특징</strong>을 함께 입력하세요. (예: TV 스마트 기능, 세탁기 건조 기능)
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+              검색 결과의 정확도를 높이기 위해 카테고리를 반드시 포함해주세요.
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       <Box className="device-grid">
