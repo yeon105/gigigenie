@@ -11,11 +11,10 @@
 .sidebar-close-btn {
     position: absolute;
     top: 10px;
-    right: 10px;
 }
 
 .sidebar-content {
-    padding: 20px 15px 10px;
+    padding: 20px 10px 10px;
 }
 
 .sidebar-title {
@@ -35,7 +34,7 @@
 
 .bottom-actions {
     margin-top: auto;
-    padding: 15px;
+    padding: 10px;
 }
 
 .register-hint {
