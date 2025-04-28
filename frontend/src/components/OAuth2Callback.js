@@ -27,14 +27,10 @@ const OAuth2Callback = () => {
           return;
         }
         
-        console.log('OAuth2 콜백 처리 시작:', { id, name, role });
-        
         // 현재 로그인 상태 확인
         const checkLoginRes = await axios.get(`${API_SERVER_HOST}/api/member/me`, {
           withCredentials: true
         });
-        
-        console.log('로그인 상태 확인 결과:', checkLoginRes.data);
         
         if (!checkLoginRes.data.isLoggedIn) {
           console.warn('토큰은 전달되었지만 로그인 상태가 아닙니다');
@@ -46,14 +42,12 @@ const OAuth2Callback = () => {
         
         try {
           favs = await favoriteList(id);
-          console.log('즐겨찾기 로드 성공:', favs.length);
         } catch (err) {
           console.warn('즐겨찾기 로드 실패:', err);
         }
         
         try {
           recents = await getRecentProducts();
-          console.log('최근 제품 로드 성공:', recents.length);
         } catch (err) {
           console.warn('최근 제품 로드 실패:', err);
         }
@@ -68,7 +62,6 @@ const OAuth2Callback = () => {
           message: '구글 로그인에 성공했습니다.'
         }));
         
-        console.log('로그인 처리 완료, 메인 페이지로 이동');
         navigate('/');
       } catch (error) {
         console.error('OAuth2 콜백 처리 오류:', error);
