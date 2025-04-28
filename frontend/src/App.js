@@ -8,6 +8,7 @@ import { API_SERVER_HOST } from "./config/ApiConfig";
 import "./App.css";
 import ChatPage from "./pages/ChatPage";
 import DevicePage from "./pages/DevicePage";
+import IntroPage from "./pages/IntroPage";
 import Header from "./pages/Header";
 import LoginPage from "./pages/LoginPage";
 import SideLayout from "./pages/SideLayout";
@@ -21,6 +22,7 @@ function App() {
   const location = useLocation();
   const dispatch = useDispatch();
   const isLoginPage = location.pathname === "/login";
+  const isIntroPage = location.pathname === "/";
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isLogin, user } = useSelector((state) => state.login || {});
   const sidebarRef = useRef(null);
@@ -114,7 +116,7 @@ function App() {
           overflow: "hidden",
         }}
       >
-        {!isLoginPage && (
+        {(!isLoginPage && !isIntroPage) && (
           <Header
             isLoggedIn={isLogin}
             userRole={getUserRole()}
@@ -124,7 +126,8 @@ function App() {
 
         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "auto" }}>
           <Routes>
-            <Route path="/" element={<DevicePage />} />
+            <Route path="/" element={<IntroPage />} />
+            <Route path="/device" element={<DevicePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/oauth2-callback" element={<OAuth2Callback />} />

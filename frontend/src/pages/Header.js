@@ -53,7 +53,7 @@ const Header = ({ isLoggedIn, onMenuClick, userRole }) => {
       dispatch(showToastMessage("채팅 진행 중에는 홈으로 이동할 수 없습니다.\n채팅방 나가기를 이용해주세요."));
       return;
     }
-    navigate("/");
+    navigate("/device");
   };
 
   const handleLogout = async () => {

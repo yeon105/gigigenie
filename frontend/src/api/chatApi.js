@@ -33,7 +33,7 @@ export const savePdf = async (name, categoryId, file, imageFile = null) => {
         
         return response.data;
     } catch (error) {
-        console.error("PDF 저장 실패:", error);
+        // console.error("PDF 저장 실패:", error);
         throw error;
     }
 };
@@ -149,8 +149,6 @@ export const getRecentProducts = async () => {
                 memberId: memberId
             }
         });
-        
-        console.log("최근 제품 목록 조회 결과:", response.data);
         
         store.dispatch(updateRecents(response.data));
         

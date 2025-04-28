@@ -38,7 +38,7 @@ const ChatPage = () => {
   // 컴포넌트 마운트 시 제품 선택 처리
   useEffect(() => {
     if (!deviceName || !productId) {
-      navigate("/");
+      navigate("/device");
       return;
     }
 
@@ -191,7 +191,7 @@ const ChatPage = () => {
           severity: 'success'
         });
         setTimeout(() => {
-          navigate('/');
+          navigate('/device');
         }, 1500);
       } catch (error) {
         setSnackbar({
@@ -201,7 +201,7 @@ const ChatPage = () => {
         });
       }
     } else {
-      navigate('/');
+      navigate('/device');
     }
   };
 
@@ -216,7 +216,7 @@ const ChatPage = () => {
             console.error("세션 종료 실패:", error);
         }
     }
-    navigate('/');
+    navigate('/device');
 };
 
   // 새 채팅 시작
