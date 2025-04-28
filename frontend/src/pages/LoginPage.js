@@ -104,14 +104,14 @@ const LoginPage = () => {
         message: "로그인에 성공했습니다."
       }));
       
-      navigate("/");
+      navigate("/device");
     } catch (error) {
       dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
     }
   };
 
   const handleContinueWithoutLogin = () => {
-    navigate("/");
+    navigate("/device");
   };
 
   const handleJoin = async () => {
@@ -157,7 +157,7 @@ const LoginPage = () => {
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    navigate("/device");
   };
 
   return (

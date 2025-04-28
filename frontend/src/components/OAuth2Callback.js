@@ -62,7 +62,7 @@ const OAuth2Callback = () => {
           message: '구글 로그인에 성공했습니다.'
         }));
         
-        navigate('/');
+        navigate('/device');
       } catch (error) {
         console.error('OAuth2 콜백 처리 오류:', error);
         navigate('/login?error=oauth-processing');
