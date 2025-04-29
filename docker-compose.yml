@@ -9,6 +9,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1005
       POSTGRES_DB: manulo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - container_network
   redis:
@@ -53,3 +55,6 @@ services:
       - container_network
 networks:
   container_network:
+
+volumes:
+  postgres_data:
